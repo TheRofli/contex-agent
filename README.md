@@ -2,6 +2,11 @@
 
 Mindo is a local-first AI companion for Obsidian. It can chat with the active note, search the vault, create and edit Markdown notes, run local voice workflows, and maintain a structured Mindo Wiki memory layer.
 
+Repository: `https://github.com/TheRofli/mindo`
+
+Note: the public product name is Mindo. The Obsidian plugin id and release
+folder still use `contex-agent` for compatibility with existing installs.
+
 ## Features
 
 - Active-note aware chat with vault and web context.
@@ -14,7 +19,7 @@ Mindo is a local-first AI companion for Obsidian. It can chat with the active no
 
 ## Install For Local Testing
 
-1. Copy this folder into your vault:
+1. Copy or clone this repository into your vault plugins folder:
 
    `Vault/.obsidian/plugins/contex-agent`
 
