@@ -46,16 +46,16 @@ jobs:
         run: |
           $version = "${{ github.ref_name }}"
           New-Item -ItemType Directory -Force release | Out-Null
-          Compress-Archive -Path dist/contex-agent/* -DestinationPath "release/contex-agent-$version.zip" -Force
+          Compress-Archive -Path dist/mindo/* -DestinationPath "release/mindo-$version.zip" -Force
 
       - name: Publish GitHub release
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            dist/contex-agent/manifest.json
-            dist/contex-agent/main.js
-            dist/contex-agent/styles.css
-            release/contex-agent-${{ github.ref_name }}.zip
-            dist/contex-agent-release.json
+            dist/mindo/manifest.json
+            dist/mindo/main.js
+            dist/mindo/styles.css
+            release/mindo-${{ github.ref_name }}.zip
+            dist/mindo-release.json
           draft: false
           generate_release_notes: true

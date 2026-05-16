@@ -1,42 +1,42 @@
-Contex Source Available License
+Mindo Source Available License
 Version 1.0
 
-Copyright (c) 2026 Contex
+Copyright (c) 2026 Mindo
 
-This license applies to Contex Agent, including its source code, compiled
+This license applies to Mindo, including its source code, compiled
 plugin files, documentation, assets, tests, and release packages.
 
 1. Permission Granted
 
-You may download, install, run, and use Contex Agent for personal,
+You may download, install, run, and use Mindo for personal,
 educational, internal, or evaluation purposes.
 
-You may inspect the source code to understand how Contex Agent works,
+You may inspect the source code to understand how Mindo works,
 audit its behavior, report issues, submit feedback, and contribute
-changes to the official Contex Agent project when the project maintainer
+changes to the official Mindo project when the project maintainer
 accepts those changes.
 
 2. Restrictions
 
 You may not, without prior written permission from the copyright holder:
 
-- redistribute Contex Agent or modified versions of it as your own product;
-- sell, sublicense, rent, host, or commercially provide Contex Agent;
+- redistribute Mindo or modified versions of it as your own product;
+- sell, sublicense, rent, host, or commercially provide Mindo;
 - use substantial portions of the source code, UI, prompts, workflows,
   documentation, or bundled assets in a competing Obsidian plugin, AI
   assistant, local-first agent, voice agent, RAG system, or knowledge
   management product;
 - remove or alter copyright, license, author, or attribution notices;
-- publish modified builds that could be confused with the official Contex
-  Agent release;
-- use the Contex name, logo, or visual identity without permission.
+- publish modified builds that could be confused with the official Mindo
+  release;
+- use the Mindo name, logo, or visual identity without permission.
 
 3. Contributions
 
 By submitting a pull request, patch, issue comment with code, or other
-contribution to the official project, you grant Contex a perpetual,
+contribution to the official project, you grant Mindo a perpetual,
 worldwide, royalty-free license to use, modify, distribute, sublicense, and
-commercialize that contribution as part of Contex Agent.
+commercialize that contribution as part of Mindo.
 
 4. Third-Party Components
 
@@ -46,7 +46,7 @@ those components.
 
 5. No Warranty
 
-Contex Agent is provided "as is", without warranty of any kind, express or
+Mindo is provided "as is", without warranty of any kind, express or
 implied, including but not limited to warranties of merchantability,
 fitness for a particular purpose, and non-infringement. The copyright
 holder is not liable for any claim, damage, loss, or other liability
@@ -55,4 +55,4 @@ arising from use of the software.
 6. Permissions
 
 For commercial licensing, redistribution, private deployment, or permission
-to reuse parts of Contex Agent, contact the project maintainer.
+to reuse parts of Mindo, contact the project maintainer.

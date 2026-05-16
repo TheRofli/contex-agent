@@ -68,34 +68,34 @@ function Resolve-SttTempDir {
 }
 
 function Resolve-RuntimeRoot {
-  if ($env:CONTEX_STT_HOME) {
-    return $env:CONTEX_STT_HOME
+  if ($env:MINDO_STT_HOME) {
+    return $env:MINDO_STT_HOME
   }
 
-  $pluginRuntimeRoot = Join-Path $PluginDir ".contex-stt-runtime"
+  $pluginRuntimeRoot = Join-Path $PluginDir ".mindo-stt-runtime"
   if (Test-Path $pluginRuntimeRoot) {
     return $pluginRuntimeRoot
   }
 
   if ($env:LOCALAPPDATA) {
-    $localAppDataRoot = Join-Path $env:LOCALAPPDATA "ContexAgent\stt"
+    $localAppDataRoot = Join-Path $env:LOCALAPPDATA "Mindo\stt"
 
     if (Test-WritableDirectory $localAppDataRoot) {
       return $localAppDataRoot
     }
   }
 
-  $tmpRoot = "C:\tmp\contex-agent-stt"
+  $tmpRoot = "C:\tmp\mindo-stt"
 
   if (Test-WritableDirectory $tmpRoot) {
     return $tmpRoot
   }
 
-  return Join-Path $PluginDir ".contex-stt-runtime"
+  return Join-Path $PluginDir ".mindo-stt-runtime"
 }
 
 function Resolve-SttBackend {
-  $backend = if ($env:CONTEX_STT_BACKEND) { $env:CONTEX_STT_BACKEND.Trim() } else { "parakeet" }
+  $backend = if ($env:MINDO_STT_BACKEND) { $env:MINDO_STT_BACKEND.Trim() } else { "parakeet" }
 
   if ($backend -in @("faster-whisper", "parakeet")) {
     return $backend
@@ -213,7 +213,7 @@ function Ensure-SttRuntimeDirectories {
     $env:NUMBA_CACHE_DIR,
     $env:TORCH_HOME,
     $env:XDG_CACHE_HOME,
-    $env:CONTEX_STT_USER_HOME,
+    $env:MINDO_STT_USER_HOME,
     $env:HF_HOME,
     $env:HF_HUB_CACHE
   )
@@ -242,8 +242,8 @@ try {
 }
 
 function Resolve-Python {
-  if ($env:CONTEX_PYTHON -and (Test-Path $env:CONTEX_PYTHON)) {
-    return $env:CONTEX_PYTHON
+  if ($env:MINDO_PYTHON -and (Test-Path $env:MINDO_PYTHON)) {
+    return $env:MINDO_PYTHON
   }
 
   $storedPythonPathFile = Join-Path $RuntimeRoot "python-path.txt"
@@ -276,10 +276,10 @@ function Resolve-Python {
     return $unrealPython
   }
 
-  throw "Python was not found. Install Python 3.10+ or set CONTEX_PYTHON to python.exe."
+  throw "Python was not found. Install Python 3.10+ or set MINDO_PYTHON to python.exe."
 }
 
-function Invoke-ContexPython {
+function Invoke-MindoPython {
   param(
     [string]$PythonPath,
     [string[]]$PythonArguments
@@ -296,7 +296,7 @@ function Invoke-ContexPython {
   }
 }
 
-function Invoke-ContexPythonAllowStderr {
+function Invoke-MindoPythonAllowStderr {
   param(
     [string]$PythonPath,
     [string[]]$PythonArguments
@@ -379,7 +379,7 @@ print('Parakeet model ready:', type(model).__name__)
 "@
 
   try {
-    Invoke-ContexPythonAllowStderr $PythonPath @("-c", $preloadScript)
+    Invoke-MindoPythonAllowStderr $PythonPath @("-c", $preloadScript)
   } finally {
     $env:PYTHONPATH = $oldPythonPath
   }
@@ -395,7 +395,7 @@ function Install-Requirements {
     throw "Requirements file not found: $RequirementsPath"
   }
 
-  Invoke-ContexPython $PythonPath @(
+  Invoke-MindoPython $PythonPath @(
     "-m",
     "pip",
     "install",
@@ -417,17 +417,17 @@ $env:MPLCONFIGDIR = Join-Path $RuntimeRoot "matplotlib"
 $env:NUMBA_CACHE_DIR = Join-Path $RuntimeRoot "numba-cache"
 $env:TORCH_HOME = Join-Path $RuntimeRoot "torch"
 $env:XDG_CACHE_HOME = Join-Path $RuntimeRoot "xdg-cache"
-$env:CONTEX_STT_USER_HOME = Join-Path $RuntimeRoot "home"
-$env:CONTEX_STT_BACKEND = $Backend
-$env:CONTEX_STT_RUNTIME_ROOT = $RuntimeRoot
-$env:CONTEX_STT_MODEL_DIR = $ModelDir
+$env:MINDO_STT_USER_HOME = Join-Path $RuntimeRoot "home"
+$env:MINDO_STT_BACKEND = $Backend
+$env:MINDO_STT_RUNTIME_ROOT = $RuntimeRoot
+$env:MINDO_STT_MODEL_DIR = $ModelDir
 $env:TEMP = $TempDir
 $env:TMP = $env:TEMP
 Ensure-SttRuntimeDirectories
 
 if ($Backend -eq "parakeet") {
-  $env:HOME = $env:CONTEX_STT_USER_HOME
-  $env:USERPROFILE = $env:CONTEX_STT_USER_HOME
+  $env:HOME = $env:MINDO_STT_USER_HOME
+  $env:USERPROFILE = $env:MINDO_STT_USER_HOME
 }
 
 Write-Host "Using Python: $Python"
@@ -437,22 +437,22 @@ Write-Host "Using STT model cache: $ModelDir"
 Write-Host "Using STT backend: $Backend"
 Set-Content -LiteralPath (Join-Path $RuntimeRoot "python-path.txt") -Value $Python
 
-Invoke-ContexPython $Python @("-c", "import sys; print(sys.version)")
+Invoke-MindoPython $Python @("-c", "import sys; print(sys.version)")
 
-if (!$env:CONTEX_STT_MODEL) {
-  $env:CONTEX_STT_MODEL = Resolve-DefaultModel $Backend
+if (!$env:MINDO_STT_MODEL) {
+  $env:MINDO_STT_MODEL = Resolve-DefaultModel $Backend
 }
 
-if (!$env:CONTEX_STT_LANGUAGE) {
-  $env:CONTEX_STT_LANGUAGE = "auto"
+if (!$env:MINDO_STT_LANGUAGE) {
+  $env:MINDO_STT_LANGUAGE = "auto"
 }
 
-if (!$env:CONTEX_STT_BEAM_SIZE) {
-  $env:CONTEX_STT_BEAM_SIZE = "5"
+if (!$env:MINDO_STT_BEAM_SIZE) {
+  $env:MINDO_STT_BEAM_SIZE = "5"
 }
 
-if (!$env:CONTEX_STT_INITIAL_PROMPT) {
-  $env:CONTEX_STT_INITIAL_PROMPT = "Russian speech with technical terms: Contex, Obsidian, Markdown, BitNet, vault, rollback, Kokoro, Silero, Whisper, local LLM."
+if (!$env:MINDO_STT_INITIAL_PROMPT) {
+  $env:MINDO_STT_INITIAL_PROMPT = "Russian speech with technical terms: Mindo, Obsidian, Markdown, BitNet, vault, rollback, Kokoro, Silero, Whisper, local LLM."
 }
 
 if (!(Test-SttDependencies $Python $Backend)) {
@@ -473,34 +473,34 @@ if (!(Test-SttDependencies $Python $Backend)) {
 
 if ($InstallOnly) {
   Initialize-SttModel $Python $Backend
-  Remove-OtherSttModelCaches $RuntimeRoot $Backend $env:CONTEX_STT_MODEL
+  Remove-OtherSttModelCaches $RuntimeRoot $Backend $env:MINDO_STT_MODEL
   Clear-SttInstallCaches $RuntimeRoot
-  Write-Host "Contex Local STT dependencies are installed for $Backend."
+  Write-Host "Mindo Local STT dependencies are installed for $Backend."
   exit 0
 }
 
-Remove-OtherSttModelCaches $RuntimeRoot $Backend $env:CONTEX_STT_MODEL
+Remove-OtherSttModelCaches $RuntimeRoot $Backend $env:MINDO_STT_MODEL
 Clear-SttInstallCaches $RuntimeRoot
 Ensure-SttRuntimeDirectories
 
 $oldPythonPath = $env:PYTHONPATH
 $env:PYTHONPATH = if ($oldPythonPath) { "$TargetDir;$oldPythonPath" } else { $TargetDir }
 
-$HostValue = if ($env:CONTEX_STT_HOST) { $env:CONTEX_STT_HOST } else { "127.0.0.1" }
-$PortValue = if ($env:CONTEX_STT_PORT) { $env:CONTEX_STT_PORT } else { "9000" }
+$HostValue = if ($env:MINDO_STT_HOST) { $env:MINDO_STT_HOST } else { "127.0.0.1" }
+$PortValue = if ($env:MINDO_STT_PORT) { $env:MINDO_STT_PORT } else { "9000" }
 
 Write-Host ""
-Write-Host "Contex Local STT is starting."
+Write-Host "Mindo Local STT is starting."
 Write-Host "Endpoint: http://$HostValue`:$PortValue/transcribe"
 Write-Host "Health: http://$HostValue`:$PortValue/health"
 Write-Host "Backend: $Backend"
-Write-Host "Model: $env:CONTEX_STT_MODEL"
-Write-Host "Language: $env:CONTEX_STT_LANGUAGE"
-Write-Host "Beam size: $env:CONTEX_STT_BEAM_SIZE"
+Write-Host "Model: $env:MINDO_STT_MODEL"
+Write-Host "Language: $env:MINDO_STT_LANGUAGE"
+Write-Host "Beam size: $env:MINDO_STT_BEAM_SIZE"
 Write-Host "First transcription may download/load the selected model."
 Write-Host ""
 
-Invoke-ContexPython $Python @(
+Invoke-MindoPython $Python @(
   "-m",
   "uvicorn",
   "server:app",

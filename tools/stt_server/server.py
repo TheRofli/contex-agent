@@ -10,16 +10,16 @@ from fastapi import FastAPI, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 
 
-BACKEND = os.environ.get("CONTEX_STT_BACKEND", "parakeet")
+BACKEND = os.environ.get("MINDO_STT_BACKEND", "parakeet")
 DEFAULT_MODELS = {
     "faster-whisper": "small",
     "parakeet": "nvidia/parakeet-tdt-0.6b-v3",
 }
-MODEL_NAME = os.environ.get("CONTEX_STT_MODEL") or DEFAULT_MODELS.get(
+MODEL_NAME = os.environ.get("MINDO_STT_MODEL") or DEFAULT_MODELS.get(
     BACKEND, "nvidia/parakeet-tdt-0.6b-v3"
 )
-DEVICE = os.environ.get("CONTEX_STT_DEVICE", "cpu")
-COMPUTE_TYPE = os.environ.get("CONTEX_STT_COMPUTE_TYPE", "int8")
+DEVICE = os.environ.get("MINDO_STT_DEVICE", "cpu")
+COMPUTE_TYPE = os.environ.get("MINDO_STT_COMPUTE_TYPE", "int8")
 def normalize_language_hint(value: str | None) -> str | None:
     if not value:
         return None
@@ -28,23 +28,23 @@ def normalize_language_hint(value: str | None) -> str | None:
     return None if normalized in {"", "auto", "detect", "none"} else normalized
 
 
-LANGUAGE = normalize_language_hint(os.environ.get("CONTEX_STT_LANGUAGE"))
-BEAM_SIZE = int(os.environ.get("CONTEX_STT_BEAM_SIZE", "5"))
-INITIAL_PROMPT = os.environ.get("CONTEX_STT_INITIAL_PROMPT") or None
+LANGUAGE = normalize_language_hint(os.environ.get("MINDO_STT_LANGUAGE"))
+BEAM_SIZE = int(os.environ.get("MINDO_STT_BEAM_SIZE", "5"))
+INITIAL_PROMPT = os.environ.get("MINDO_STT_INITIAL_PROMPT") or None
 PRELOAD_ON_START = (
-    os.environ.get("CONTEX_STT_PRELOAD_ON_START", "").lower()
+    os.environ.get("MINDO_STT_PRELOAD_ON_START", "").lower()
     in {"1", "true", "yes", "on"}
 ) or BACKEND == "parakeet"
 RUNTIME_ROOT = Path(
-    os.environ.get("CONTEX_STT_RUNTIME_ROOT")
-    or os.environ.get("CONTEX_STT_HOME")
-    or Path(tempfile.gettempdir()) / "contex-agent-stt"
+    os.environ.get("MINDO_STT_RUNTIME_ROOT")
+    or os.environ.get("MINDO_STT_HOME")
+    or Path(tempfile.gettempdir()) / "mindo-stt"
 )
 MODEL_DIR = Path(
-    os.environ.get("CONTEX_STT_MODEL_DIR") or RUNTIME_ROOT / "models"
+    os.environ.get("MINDO_STT_MODEL_DIR") or RUNTIME_ROOT / "models"
 )
 
-app = FastAPI(title="Contex Local STT")
+app = FastAPI(title="Mindo Local STT")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["app://obsidian.md", "http://localhost", "http://127.0.0.1"],

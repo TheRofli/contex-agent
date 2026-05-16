@@ -1,4 +1,4 @@
-export const VIEW_TYPE_CONTEXT_AGENT = "contex-agent-view";
+export const VIEW_TYPE_CONTEXT_AGENT = "mindo-view";
 
 export type TtsProvider =
   | "disabled"

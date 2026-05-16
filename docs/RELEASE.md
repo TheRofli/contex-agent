@@ -40,11 +40,11 @@ npm run package
 
 The clean output is:
 
-`dist/contex-agent`
+`dist/mindo`
 
 The package manifest with hashes is:
 
-`dist/contex-agent-release.json`
+`dist/mindo-release.json`
 
 ## 4. Obsidian Manual Release Files
 
@@ -76,12 +76,12 @@ Keep these in sync:
 
 ## 6. GitHub Release
 
-Attach the contents of `dist/contex-agent` or a zip created from that folder.
+Attach the contents of `dist/mindo` or a zip created from that folder.
 
 Do not attach local `data.json`.
 
 The recommended release path is to push a tag that exactly matches
-`manifest.json` -> `version`, for example `0.1.0`, and let
+`manifest.json` -> `version`, for example `0.2.0`, and let
 `.github/workflows/release.yml` create the GitHub release.
 
 For Obsidian Community Plugin submission, do not use only a `vX.Y.Z` release:

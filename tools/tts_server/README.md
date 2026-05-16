@@ -1,4 +1,4 @@
-# Contex Local TTS
+# Mindo Local TTS
 
 Contex uses these local TTS engines:
 
@@ -26,7 +26,7 @@ http://127.0.0.1:9100/speech
 The first speech request downloads the selected Silero model into:
 
 ```text
-%LOCALAPPDATA%\ContexAgent\silero\models
+%LOCALAPPDATA%\Mindo\silero\models
 ```
 
 Available voices:
@@ -52,7 +52,7 @@ The first English speech request may download the ONNX model into the local
 Hugging Face cache:
 
 ```text
-%LOCALAPPDATA%\ContexAgent\kokoro-js\hf-cache
+%LOCALAPPDATA%\Mindo\kokoro-js\hf-cache
 ```
 
 Recommended default English voice: `af_heart`.

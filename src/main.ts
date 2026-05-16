@@ -1344,7 +1344,7 @@ export default class ContexAgentPlugin extends Plugin {
   }
 
   private writeLocalSttLog(message: string): void {
-    const logPath = this.getPluginFullPath(".contex-stt/stt.log");
+    const logPath = this.getPluginFullPath(".mindo-stt/stt.log");
 
     if (!logPath) {
       return;
@@ -1362,17 +1362,17 @@ export default class ContexAgentPlugin extends Plugin {
     const localAppData = process.env.LOCALAPPDATA?.trim();
     const userProfile = process.env.USERPROFILE?.trim();
     const logPath = localAppData
-      ? join(localAppData, "ContexAgent", "kokoro-js", "kokoro-plugin.log")
+      ? join(localAppData, "Mindo", "kokoro-js", "kokoro-plugin.log")
       : userProfile
         ? join(
             userProfile,
             "AppData",
             "Local",
-            "ContexAgent",
+            "Mindo",
             "kokoro-js",
             "kokoro-plugin.log"
           )
-        : this.getPluginFullPath(".contex-kokoro-js/kokoro-plugin.log");
+        : this.getPluginFullPath(".mindo-kokoro-js/kokoro-plugin.log");
 
     if (!logPath) {
       return;
@@ -1390,17 +1390,17 @@ export default class ContexAgentPlugin extends Plugin {
     const localAppData = process.env.LOCALAPPDATA?.trim();
     const userProfile = process.env.USERPROFILE?.trim();
     const logPath = localAppData
-      ? join(localAppData, "ContexAgent", "silero", "silero-plugin.log")
+      ? join(localAppData, "Mindo", "silero", "silero-plugin.log")
       : userProfile
         ? join(
             userProfile,
             "AppData",
             "Local",
-            "ContexAgent",
+            "Mindo",
             "silero",
             "silero-plugin.log"
           )
-        : this.getPluginFullPath(".contex-silero/silero-plugin.log");
+        : this.getPluginFullPath(".mindo-silero/silero-plugin.log");
 
     if (!logPath) {
       return;

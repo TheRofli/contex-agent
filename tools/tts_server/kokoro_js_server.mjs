@@ -4,17 +4,17 @@ import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { KokoroTTS } from "kokoro-js";
 
-const HOST = process.env.CONTEX_KOKORO_JS_HOST || "127.0.0.1";
-const PORT = Number.parseInt(process.env.CONTEX_KOKORO_JS_PORT || "9200", 10);
+const HOST = process.env.MINDO_KOKORO_JS_HOST || "127.0.0.1";
+const PORT = Number.parseInt(process.env.MINDO_KOKORO_JS_PORT || "9200", 10);
 const MODEL_ID =
-  process.env.CONTEX_KOKORO_MODEL ||
+  process.env.MINDO_KOKORO_MODEL ||
   "onnx-community/Kokoro-82M-v1.0-ONNX";
-const DEFAULT_VOICE = process.env.CONTEX_KOKORO_VOICE || "af_heart";
-const DTYPE = process.env.CONTEX_KOKORO_DTYPE || "q8";
-const DEVICE = process.env.CONTEX_KOKORO_DEVICE || "cpu";
+const DEFAULT_VOICE = process.env.MINDO_KOKORO_VOICE || "af_heart";
+const DTYPE = process.env.MINDO_KOKORO_DTYPE || "q8";
+const DEVICE = process.env.MINDO_KOKORO_DEVICE || "cpu";
 const TMP_ROOT =
-  process.env.CONTEX_KOKORO_TMP ||
-  join(tmpdir(), "contex-agent-kokoro-js");
+  process.env.MINDO_KOKORO_TMP ||
+  join(tmpdir(), "mindo-kokoro-js");
 
 const ENGLISH_VOICES = [
   "af_heart",

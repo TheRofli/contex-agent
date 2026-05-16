@@ -1,4 +1,4 @@
-# Contex Local STT
+# Mindo Local STT
 
 This helper starts a local STT endpoint for the Obsidian plugin:
 
@@ -26,12 +26,12 @@ Supported backends:
 Optional environment variables:
 
 ```powershell
-$env:CONTEX_STT_MODEL = "nvidia/parakeet-tdt-0.6b-v3"
-$env:CONTEX_STT_BACKEND = "parakeet"
-$env:CONTEX_STT_DEVICE = "cpu"
-$env:CONTEX_STT_COMPUTE_TYPE = "int8"
-$env:CONTEX_STT_LANGUAGE = "auto"
-$env:CONTEX_STT_PORT = "9000"
-$env:CONTEX_STT_HOME = "C:\tmp\contex-agent-stt"
-$env:CONTEX_STT_PRELOAD_ON_START = "1"
+$env:MINDO_STT_MODEL = "nvidia/parakeet-tdt-0.6b-v3"
+$env:MINDO_STT_BACKEND = "parakeet"
+$env:MINDO_STT_DEVICE = "cpu"
+$env:MINDO_STT_COMPUTE_TYPE = "int8"
+$env:MINDO_STT_LANGUAGE = "auto"
+$env:MINDO_STT_PORT = "9000"
+$env:MINDO_STT_HOME = "C:\tmp\mindo-stt"
+$env:MINDO_STT_PRELOAD_ON_START = "1"
 ```

@@ -23,7 +23,7 @@ if (!$processIds.Count) {
 }
 
 if (!$processIds.Count) {
-  Write-Host "No Contex Local STT listener found on port $Port."
+  Write-Host "No Mindo Local STT listener found on port $Port."
   exit 0
 }
 

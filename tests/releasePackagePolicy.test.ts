@@ -7,6 +7,7 @@ for (const unsafeDirectory of [
   ".contex-stt-runtime",
   ".cache",
   ".huggingface",
+  ".mindo-stt-runtime",
   "pip-cache",
   "node_modules",
   "target"

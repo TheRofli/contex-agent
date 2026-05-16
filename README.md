@@ -4,8 +4,8 @@ Mindo is a local-first AI companion for Obsidian. It can chat with the active no
 
 Repository: `https://github.com/TheRofli/mindo`
 
-Note: the public product name is Mindo. The Obsidian plugin id and release
-folder still use `contex-agent` for compatibility with existing installs.
+Note: the public product name, repository, Obsidian plugin id, and release
+folder are now `mindo`.
 
 ## Features
 
@@ -21,7 +21,7 @@ folder still use `contex-agent` for compatibility with existing installs.
 
 1. Copy or clone this repository into your vault plugins folder:
 
-   `Vault/.obsidian/plugins/contex-agent`
+   `Vault/.obsidian/plugins/mindo`
 
 2. Install dependencies:
 
@@ -78,7 +78,7 @@ npm run package
 
 The release output is written to:
 
-`dist/contex-agent`
+`dist/mindo`
 
 ## Publishing
 
@@ -99,6 +99,6 @@ For an Obsidian release, upload at minimum:
 - `main.js`
 - `styles.css`
 
-If you want bundled local acceleration/runtime helpers, include the generated `dist/contex-agent` folder contents from `npm run package`.
+If you want bundled local acceleration/runtime helpers, include the generated `dist/mindo` folder contents from `npm run package`.
 
 Never publish `data.json`; it contains local settings and API keys.

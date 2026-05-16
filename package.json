@@ -1,6 +1,6 @@
 {
-  "name": "contex-agent",
-  "version": "0.1.0",
+  "name": "mindo",
+  "version": "0.2.0",
   "description": "Talk to your vault with local voice, RAG, Wiki memory, safe edits, and Mindo Code.",
   "main": "main.js",
   "scripts": {
@@ -15,9 +15,9 @@
     "core:bench": "node scripts/run-cargo.mjs test --release --manifest-path tools/contex_core/Cargo.toml",
     "core:install": "powershell -NoProfile -ExecutionPolicy Bypass -Command \"New-Item -ItemType Directory -Force bin | Out-Null; Copy-Item tools/contex_core/target/release/contex-core.exe bin/contex-core.exe -Force\"",
     "stt:install": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/stt_server/start_stt_server.ps1 -InstallOnly",
-    "stt:install:parakeet": "powershell -NoProfile -ExecutionPolicy Bypass -Command \"$env:CONTEX_STT_BACKEND='parakeet'; & tools/stt_server/start_stt_server.ps1 -InstallOnly\"",
+    "stt:install:parakeet": "powershell -NoProfile -ExecutionPolicy Bypass -Command \"$env:MINDO_STT_BACKEND='parakeet'; & tools/stt_server/start_stt_server.ps1 -InstallOnly\"",
     "stt:start": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/stt_server/start_stt_server.ps1",
-    "stt:start:parakeet": "powershell -NoProfile -ExecutionPolicy Bypass -Command \"$env:CONTEX_STT_BACKEND='parakeet'; $env:CONTEX_STT_MODEL='nvidia/parakeet-tdt-0.6b-v3'; & tools/stt_server/start_stt_server.ps1\"",
+    "stt:start:parakeet": "powershell -NoProfile -ExecutionPolicy Bypass -Command \"$env:MINDO_STT_BACKEND='parakeet'; $env:MINDO_STT_MODEL='nvidia/parakeet-tdt-0.6b-v3'; & tools/stt_server/start_stt_server.ps1\"",
     "tts:kokoro:start": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/tts_server/start_kokoro_server.ps1",
     "tts:kokoro:stop": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/tts_server/stop_kokoro_server.ps1",
     "tts:silero:start": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/tts_server/start_silero_server.ps1",

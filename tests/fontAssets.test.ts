@@ -26,7 +26,7 @@ assert.ok(styles.includes("./assets/fonts/comfortaa/Comfortaa-Regular.ttf"));
 assert.ok(/\.contex-agent\s*\{[^}]*font-family:\s*var\(--mindo-font-family\);/s.test(styles));
 assert.ok(
   styles.includes(
-    '.workspace-leaf-content[data-type="contex-agent-view"] .contex-agent.contex-agent--font-comfortaa'
+    '.workspace-leaf-content[data-type="mindo-view"] .contex-agent.contex-agent--font-comfortaa'
   )
 );
 assert.ok(

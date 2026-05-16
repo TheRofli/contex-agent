@@ -22,30 +22,30 @@ function Test-WritableDirectory {
 }
 
 function Resolve-KokoroRuntime {
-  if ($env:CONTEX_KOKORO_JS_HOME) {
-    return $env:CONTEX_KOKORO_JS_HOME
+  if ($env:MINDO_KOKORO_JS_HOME) {
+    return $env:MINDO_KOKORO_JS_HOME
   }
 
   if ($env:LOCALAPPDATA) {
-    $localRoot = Join-Path $env:LOCALAPPDATA "ContexAgent\kokoro-js"
+    $localRoot = Join-Path $env:LOCALAPPDATA "Mindo\kokoro-js"
 
     if (Test-WritableDirectory $localRoot) {
       return $localRoot
     }
   }
 
-  $tmpRoot = "C:\tmp\contex-agent-kokoro-js"
+  $tmpRoot = "C:\tmp\mindo-kokoro-js"
 
   if (Test-WritableDirectory $tmpRoot) {
     return $tmpRoot
   }
 
-  return Join-Path $PluginDir ".contex-kokoro-js"
+  return Join-Path $PluginDir ".mindo-kokoro-js"
 }
 
 function Resolve-Node {
-  if ($env:CONTEX_NODE -and (Test-Path $env:CONTEX_NODE)) {
-    return $env:CONTEX_NODE
+  if ($env:MINDO_NODE -and (Test-Path $env:MINDO_NODE)) {
+    return $env:MINDO_NODE
   }
 
   $storedNodePathFile = Join-Path $RuntimeRoot "node-path.txt"
@@ -68,7 +68,7 @@ function Resolve-Node {
     return $codexNode
   }
 
-  throw "Node.js was not found. Install Node.js 18+ or set CONTEX_NODE to node.exe."
+  throw "Node.js was not found. Install Node.js 18+ or set MINDO_NODE to node.exe."
 }
 
 function Resolve-Npm {
@@ -133,19 +133,19 @@ if (!(Test-Path $PackagePath)) {
 Copy-Item -LiteralPath (Join-Path $ScriptDir "kokoro_js_server.mjs") -Destination (Join-Path $RuntimeRoot "kokoro_js_server.mjs") -Force
 
 if ($InstallOnly) {
-  Write-Host "Contex Local Kokoro JS dependencies are installed."
+  Write-Host "Mindo Local Kokoro JS dependencies are installed."
   exit 0
 }
 
-$HostValue = if ($env:CONTEX_KOKORO_JS_HOST) { $env:CONTEX_KOKORO_JS_HOST } else { "127.0.0.1" }
-$PortValue = if ($env:CONTEX_KOKORO_JS_PORT) { $env:CONTEX_KOKORO_JS_PORT } else { "9200" }
+$HostValue = if ($env:MINDO_KOKORO_JS_HOST) { $env:MINDO_KOKORO_JS_HOST } else { "127.0.0.1" }
+$PortValue = if ($env:MINDO_KOKORO_JS_PORT) { $env:MINDO_KOKORO_JS_PORT } else { "9200" }
 
-if (!$env:CONTEX_KOKORO_MODEL) {
-  $env:CONTEX_KOKORO_MODEL = "onnx-community/Kokoro-82M-v1.0-ONNX"
+if (!$env:MINDO_KOKORO_MODEL) {
+  $env:MINDO_KOKORO_MODEL = "onnx-community/Kokoro-82M-v1.0-ONNX"
 }
 
-if (!$env:CONTEX_KOKORO_VOICE) {
-  $env:CONTEX_KOKORO_VOICE = "af_heart"
+if (!$env:MINDO_KOKORO_VOICE) {
+  $env:MINDO_KOKORO_VOICE = "af_heart"
 }
 
 if (!$env:HF_HOME) {
@@ -156,17 +156,17 @@ if (!$env:TRANSFORMERS_CACHE) {
   $env:TRANSFORMERS_CACHE = $CacheDir
 }
 
-$env:CONTEX_KOKORO_JS_HOME = $RuntimeRoot
-$env:CONTEX_KOKORO_TMP = $TempDir
+$env:MINDO_KOKORO_JS_HOME = $RuntimeRoot
+$env:MINDO_KOKORO_TMP = $TempDir
 $env:TEMP = $TempDir
 $env:TMP = $TempDir
 
 Write-Host ""
-Write-Host "Contex Local Kokoro JS TTS is starting."
+Write-Host "Mindo Local Kokoro JS TTS is starting."
 Write-Host "Endpoint: http://$HostValue`:$PortValue/v1/audio/speech"
 Write-Host "Health: http://$HostValue`:$PortValue/health"
-Write-Host "Voice: $env:CONTEX_KOKORO_VOICE"
-Write-Host "Model: $env:CONTEX_KOKORO_MODEL"
+Write-Host "Voice: $env:MINDO_KOKORO_VOICE"
+Write-Host "Model: $env:MINDO_KOKORO_MODEL"
 Write-Host "First speech may download/load the ONNX model."
 Write-Host ""
 

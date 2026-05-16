@@ -433,7 +433,7 @@ export class ContexAgentView extends ItemView {
   }
 
   private getPluginAssetResourcePath(fileName: string): string {
-    const pluginDir = this.plugin.manifest.dir ?? ".obsidian/plugins/contex-agent";
+    const pluginDir = this.plugin.manifest.dir ?? ".obsidian/plugins/mindo";
     const vaultPath = normalizePath(`${pluginDir}/${fileName}`);
     return this.app.vault.adapter.getResourcePath(vaultPath);
   }

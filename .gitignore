@@ -21,10 +21,18 @@ Contex_Project_Status.md
 в папке Obsidian с контекс код.md
 
 # Local runtime caches and downloaded models.
+.mindo-docker/
+.mindo-piper/
+.mindo-stt/
+.mindo-stt-runtime/
+.mindo-kokoro-js/
+.mindo-silero/
 .contex-docker/
 .contex-piper/
 .contex-stt/
 .contex-stt-runtime/
+.contex-kokoro-js/
+.contex-silero/
 .python-stt/
 .venv-stt/
 tools/**/__pycache__/

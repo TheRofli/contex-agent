@@ -52,10 +52,10 @@ export function getLocalKokoroEnvironment(
 ): NodeJS.ProcessEnv {
   return {
     ...baseEnvironment,
-    CONTEX_KOKORO_JS_PORT: String(getEndpointPort(settings.kokoroTtsEndpoint, 9200)),
-    CONTEX_KOKORO_MODEL:
+    MINDO_KOKORO_JS_PORT: String(getEndpointPort(settings.kokoroTtsEndpoint, 9200)),
+    MINDO_KOKORO_MODEL:
       settings.kokoroModel || DEFAULT_SETTINGS.kokoroModel,
-    CONTEX_KOKORO_VOICE:
+    MINDO_KOKORO_VOICE:
       settings.kokoroVoice || DEFAULT_KOKORO_VOICE
   };
 }
@@ -68,19 +68,19 @@ export function getLocalSttEnvironment(
 
   return {
     ...baseEnvironment,
-    CONTEX_STT_BACKEND: settings.sttBackend,
-    CONTEX_STT_MODEL: settings.sttModel || DEFAULT_SETTINGS.sttModel,
-    CONTEX_STT_HOST: getEndpointHost(settings.sttEndpoint, "127.0.0.1"),
-    CONTEX_STT_PORT: String(getEndpointPort(settings.sttEndpoint, 9000)),
-    CONTEX_STT_LANGUAGE:
+    MINDO_STT_BACKEND: settings.sttBackend,
+    MINDO_STT_MODEL: settings.sttModel || DEFAULT_SETTINGS.sttModel,
+    MINDO_STT_HOST: getEndpointHost(settings.sttEndpoint, "127.0.0.1"),
+    MINDO_STT_PORT: String(getEndpointPort(settings.sttEndpoint, 9000)),
+    MINDO_STT_LANGUAGE:
       language.toLowerCase() === "auto" ? "" : language,
-    CONTEX_STT_BEAM_SIZE: String(
+    MINDO_STT_BEAM_SIZE: String(
       getEffectiveSttBeamSize(
         settings.sttQualityMode,
         settings.sttBeamSize || DEFAULT_SETTINGS.sttBeamSize
       )
     ),
-    CONTEX_STT_INITIAL_PROMPT:
+    MINDO_STT_INITIAL_PROMPT:
       settings.sttInitialPrompt ||
       DEFAULT_SETTINGS.sttInitialPrompt
   };
@@ -92,8 +92,8 @@ export function getLocalSileroEnvironment(
 ): NodeJS.ProcessEnv {
   return {
     ...baseEnvironment,
-    CONTEX_SILERO_VOICE: getConfiguredLocalSileroVoiceName(settings),
-    CONTEX_SILERO_PORT: String(getEndpointPort(settings.sileroTtsEndpoint, 9100))
+    MINDO_SILERO_VOICE: getConfiguredLocalSileroVoiceName(settings),
+    MINDO_SILERO_PORT: String(getEndpointPort(settings.sileroTtsEndpoint, 9100))
   };
 }
 

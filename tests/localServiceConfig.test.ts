@@ -21,7 +21,7 @@ const settings: ContexSettings = {
   sttLanguage: "auto",
   sttQualityMode: "quality",
   sttBeamSize: 7,
-  sttInitialPrompt: "Contex, Obsidian, Markdown",
+  sttInitialPrompt: "Mindo, Obsidian, Markdown",
   kokoroTtsEndpoint: "http://127.0.0.1:9200/v1/audio/speech",
   kokoroModel: "onnx-community/Kokoro-82M-v1.0-ONNX",
   kokoroVoice: "af_heart",
@@ -41,23 +41,23 @@ assert.equal(getEndpointHost("http://127.0.0.1:9000/transcribe", "localhost"), "
 assert.equal(getEndpointHost("not a url", "localhost"), "localhost");
 
 assert.deepEqual(
-  getLocalSttEnvironment(settings, { PATH: "test-path" }).CONTEX_STT_LANGUAGE,
+  getLocalSttEnvironment(settings, { PATH: "test-path" }).MINDO_STT_LANGUAGE,
   ""
 );
 assert.deepEqual(
-  getLocalSttEnvironment(settings, { PATH: "test-path" }).CONTEX_STT_BACKEND,
+  getLocalSttEnvironment(settings, { PATH: "test-path" }).MINDO_STT_BACKEND,
   "parakeet"
 );
 assert.deepEqual(
-  getLocalSttEnvironment(settings, { PATH: "test-path" }).CONTEX_STT_PORT,
+  getLocalSttEnvironment(settings, { PATH: "test-path" }).MINDO_STT_PORT,
   "9000"
 );
 assert.deepEqual(
-  getLocalKokoroEnvironment(settings, { PATH: "test-path" }).CONTEX_KOKORO_JS_PORT,
+  getLocalKokoroEnvironment(settings, { PATH: "test-path" }).MINDO_KOKORO_JS_PORT,
   "9200"
 );
 assert.deepEqual(
-  getLocalSileroEnvironment(settings, { PATH: "test-path" }).CONTEX_SILERO_PORT,
+  getLocalSileroEnvironment(settings, { PATH: "test-path" }).MINDO_SILERO_PORT,
   "9100"
 );
 assert.equal(getConfiguredLocalSileroVoiceName(settings), "baya");

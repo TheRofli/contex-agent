@@ -1,6 +1,6 @@
 # GitHub Release And Obsidian Community Submission
 
-This document is the release path for Contex Agent.
+This document is the release path for Mindo.
 
 ## Important Reality Check
 
@@ -13,7 +13,7 @@ The practical protection model is:
 
 - publish source that Obsidian can review;
 - keep local secrets, caches, downloaded models, and user data out of GitHub;
-- use the Contex Source Available License instead of MIT;
+- use the Mindo Source Available License instead of MIT;
 - split future proprietary services or hosted runtimes into a private backend
   if they must remain closed.
 
@@ -25,7 +25,7 @@ Before pushing to GitHub:
 - `main.js`, `styles.css`, and `manifest.json` are produced by `npm run build`.
 - `README.md`, `CHANGELOG.md`, `LICENSE`, and `versions.json` are present.
 - `data.json` is not committed.
-- `.contex-*`, `.venv-*`, `.python-stt`, `.cache`, `node_modules`, Rust
+- `.mindo-*`, legacy `.contex-*`, `.venv-*`, `.python-stt`, `.cache`, `node_modules`, Rust
   `target`, downloaded model files, and release zips are not committed.
 - `manifest.json`, `package.json`, and `versions.json` versions match.
 - `manifest.json` has `"isDesktopOnly": true`.
@@ -45,18 +45,18 @@ npm run package
 The clean release folder is:
 
 ```text
-dist/contex-agent
+dist/mindo
 ```
 
 ## GitHub Release
 
 Create a tag that exactly matches `manifest.json` -> `version`.
-For version `0.1.0`, use `0.1.0`, not `v0.1.0`; the Obsidian submission bot
+For version `0.2.0`, use `0.2.0`, not `v0.2.0`; the Obsidian submission bot
 looks for a GitHub Release whose tag is exactly the manifest version.
 
 ```bash
-git tag 0.1.0
-git push origin 0.1.0
+git tag 0.2.0
+git push origin 0.2.0
 ```
 
 The `Release` workflow creates a GitHub release with:
@@ -64,8 +64,8 @@ The `Release` workflow creates a GitHub release with:
 - `manifest.json`
 - `main.js`
 - `styles.css`
-- `contex-agent-X.Y.Z.zip`
-- `contex-agent-release.json`
+- `mindo-X.Y.Z.zip`
+- `mindo-release.json`
 
 Open the release and manually inspect the assets before submitting to the
 community plugin catalog.
@@ -81,11 +81,11 @@ After the GitHub repo and first release are ready:
 
    ```json
    {
-     "id": "contex-agent",
-     "name": "Contex Agent",
-     "author": "Contex",
-     "description": "Talk to your vault with local voice, RAG, Wiki memory, safe edits, and Contex Code.",
-     "repo": "your-github-user/contex-agent"
+    "id": "mindo",
+    "name": "Mindo",
+    "author": "Mindo",
+    "description": "Talk to your vault with local voice, RAG, Wiki memory, safe edits, and Mindo Code.",
+    "repo": "TheRofli/mindo"
    }
    ```
 
@@ -102,11 +102,11 @@ Until the community review is accepted, users can install manually:
 2. Extract it to:
 
    ```text
-   Vault/.obsidian/plugins/contex-agent
+   Vault/.obsidian/plugins/mindo
    ```
 
 3. Restart Obsidian.
-4. Enable `Contex Agent` under Community plugins.
+4. Enable `Mindo` under Community plugins.
 
 ## BRAT / Beta Path
 
@@ -116,20 +116,20 @@ submitting to the official Community Plugins catalog.
 ## Release Notes Template
 
 ```markdown
-## Contex Agent v0.1.0
+## Mindo v0.2.0
 
-Contex Agent is a local-first AI companion for Obsidian.
+Mindo is a local-first AI companion for Obsidian.
 
 Highlights:
 - active-note and vault-aware chat;
 - local voice workflows;
-- Contex Wiki memory;
+- Mindo Wiki memory;
 - safe note creation and editing;
 - real source references;
 - Rust-accelerated search/RAG core;
-- early Contex Code planning workflow.
+- early Mindo Code planning workflow.
 
 Install:
-Download `contex-agent-0.1.0.zip`, extract it to
-`Vault/.obsidian/plugins/contex-agent`, then enable the plugin in Obsidian.
+Download `mindo-0.2.0.zip`, extract it to
+`Vault/.obsidian/plugins/mindo`, then enable the plugin in Obsidian.
 ```

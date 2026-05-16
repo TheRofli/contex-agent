@@ -14,7 +14,7 @@ import { fileURLToPath } from "node:url";
 
 const pluginDir = dirname(dirname(fileURLToPath(import.meta.url)));
 const distRoot = join(pluginDir, "dist");
-const distDir = join(distRoot, "contex-agent");
+const distDir = join(distRoot, "mindo");
 const checkOnly = process.argv.includes("--check");
 
 const requiredFiles = [
@@ -40,7 +40,18 @@ const ignoredDirectoryNames = new Set([
   "__pycache__",
   ".pytest_cache",
   ".cache",
+  ".mindo-docker",
+  ".mindo-piper",
+  ".mindo-stt",
+  ".mindo-stt-runtime",
+  ".mindo-kokoro-js",
+  ".mindo-silero",
+  ".contex-docker",
+  ".contex-piper",
+  ".contex-stt",
   ".contex-stt-runtime",
+  ".contex-kokoro-js",
+  ".contex-silero",
   ".huggingface",
   "pip-cache"
 ]);
@@ -106,7 +117,7 @@ if (checkOnly) {
   process.exit(0);
 }
 
-rmSync(distDir, { recursive: true, force: true });
+rmSync(distRoot, { recursive: true, force: true });
 mkdirSync(distDir, { recursive: true });
 
 for (const file of [...requiredFiles, ...optionalFiles]) {
@@ -119,7 +130,7 @@ for (const dir of optionalDirectories) {
 
 const packageManifest = buildPackageManifest();
 writeFileSync(
-  join(distRoot, "contex-agent-release.json"),
+  join(distRoot, "mindo-release.json"),
   JSON.stringify(
     {
       id: manifest.id,

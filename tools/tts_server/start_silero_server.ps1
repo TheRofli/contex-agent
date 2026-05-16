@@ -22,30 +22,30 @@ function Test-WritableDirectory {
 }
 
 function Resolve-SileroRuntime {
-  if ($env:CONTEX_SILERO_HOME) {
-    return $env:CONTEX_SILERO_HOME
+  if ($env:MINDO_SILERO_HOME) {
+    return $env:MINDO_SILERO_HOME
   }
 
   if ($env:LOCALAPPDATA) {
-    $localAppDataRoot = Join-Path $env:LOCALAPPDATA "ContexAgent\silero"
+    $localAppDataRoot = Join-Path $env:LOCALAPPDATA "Mindo\silero"
 
     if (Test-WritableDirectory $localAppDataRoot) {
       return $localAppDataRoot
     }
   }
 
-  $tmpRoot = "C:\tmp\contex-agent-silero"
+  $tmpRoot = "C:\tmp\mindo-silero"
 
   if (Test-WritableDirectory $tmpRoot) {
     return $tmpRoot
   }
 
-  return Join-Path $PluginDir ".contex-silero"
+  return Join-Path $PluginDir ".mindo-silero"
 }
 
 function Resolve-Python {
-  if ($env:CONTEX_PYTHON -and (Test-Path $env:CONTEX_PYTHON)) {
-    return $env:CONTEX_PYTHON
+  if ($env:MINDO_PYTHON -and (Test-Path $env:MINDO_PYTHON)) {
+    return $env:MINDO_PYTHON
   }
 
   $storedPythonPathFile = Join-Path $RuntimeRoot "python-path.txt"
@@ -78,10 +78,10 @@ function Resolve-Python {
     return $unrealPython
   }
 
-  throw "Python was not found. Install Python 3.10+ or set CONTEX_PYTHON to python.exe."
+  throw "Python was not found. Install Python 3.10+ or set MINDO_PYTHON to python.exe."
 }
 
-function Invoke-ContexPython {
+function Invoke-MindoPython {
   param(
     [string]$PythonPath,
     [string[]]$PythonArguments
@@ -111,7 +111,7 @@ try {
 
 $Python = Resolve-Python
 $env:PYTHONIOENCODING = "utf-8"
-$env:CONTEX_SILERO_HOME = $RuntimeRoot
+$env:MINDO_SILERO_HOME = $RuntimeRoot
 $env:TORCH_HOME = Join-Path $RuntimeRoot "torch"
 $env:TEMP = $TempDir
 $env:TMP = $env:TEMP
@@ -120,28 +120,28 @@ Write-Host "Using Python: $Python"
 Write-Host "Using Silero runtime: $RuntimeRoot"
 Set-Content -LiteralPath (Join-Path $RuntimeRoot "python-path.txt") -Value $Python
 
-Invoke-ContexPython $Python @("-c", "import sys; print(sys.version); import torch; print('torch', torch.__version__)")
+Invoke-MindoPython $Python @("-c", "import sys; print(sys.version); import torch; print('torch', torch.__version__)")
 
 if ($InstallOnly) {
-  Write-Host "Contex Local Silero dependencies are installed."
+  Write-Host "Mindo Local Silero dependencies are installed."
   exit 0
 }
 
-$HostValue = if ($env:CONTEX_SILERO_HOST) { $env:CONTEX_SILERO_HOST } else { "127.0.0.1" }
-$PortValue = if ($env:CONTEX_SILERO_PORT) { $env:CONTEX_SILERO_PORT } else { "9100" }
+$HostValue = if ($env:MINDO_SILERO_HOST) { $env:MINDO_SILERO_HOST } else { "127.0.0.1" }
+$PortValue = if ($env:MINDO_SILERO_PORT) { $env:MINDO_SILERO_PORT } else { "9100" }
 
-if (!$env:CONTEX_SILERO_VOICE) {
-  $env:CONTEX_SILERO_VOICE = "baya"
+if (!$env:MINDO_SILERO_VOICE) {
+  $env:MINDO_SILERO_VOICE = "baya"
 }
 
 Write-Host ""
-Write-Host "Contex Local Silero TTS is starting."
+Write-Host "Mindo Local Silero TTS is starting."
 Write-Host "Endpoint: http://$HostValue`:$PortValue/speech"
 Write-Host "Health: http://$HostValue`:$PortValue/health"
-Write-Host "Voice: $env:CONTEX_SILERO_VOICE"
+Write-Host "Voice: $env:MINDO_SILERO_VOICE"
 Write-Host "First speech may download/load the selected Silero Russian v5.5 model."
 Write-Host ""
 
-Invoke-ContexPython $Python @(
+Invoke-MindoPython $Python @(
   (Join-Path $ScriptDir "silero_server.py")
 )

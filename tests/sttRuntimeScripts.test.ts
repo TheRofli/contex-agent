@@ -31,7 +31,7 @@ assert.match(
 );
 assert.match(
   startScript,
-  /\$env:CONTEX_STT_LANGUAGE\s*=\s*"auto"/,
+  /\$env:MINDO_STT_LANGUAGE\s*=\s*"auto"/,
   "local STT should default language detection to auto"
 );
 assert.match(

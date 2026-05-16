@@ -238,7 +238,7 @@ async function searchDuckDuckGo(
     headers: {
       Accept: "text/html,application/xhtml+xml",
       "User-Agent":
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 ContexAgent/0.1"
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Mindo/0.1"
     },
     throw: false
   });

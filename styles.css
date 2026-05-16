@@ -21,8 +21,8 @@
   font-family: var(--mindo-font-family);
 }
 
-.workspace-leaf-content[data-type="contex-agent-view"] .contex-agent.contex-agent--font-comfortaa,
-.workspace-leaf-content[data-type="contex-agent-view"] .contex-agent.contex-agent--font-comfortaa :is(button, input, textarea, select, span, div, p, label, small, summary, h1, h2, h3, h4, h5, h6, li),
+.workspace-leaf-content[data-type="mindo-view"] .contex-agent.contex-agent--font-comfortaa,
+.workspace-leaf-content[data-type="mindo-view"] .contex-agent.contex-agent--font-comfortaa :is(button, input, textarea, select, span, div, p, label, small, summary, h1, h2, h3, h4, h5, h6, li),
 .contex-agent.contex-agent--font-comfortaa,
 .contex-agent.contex-agent--font-comfortaa :is(button, input, textarea, select, span, div, p, label, small, summary, h1, h2, h3, h4, h5, h6, li),
 .contex-agent:not(.contex-agent--font-obsidian),
@@ -56,10 +56,10 @@
   font-family: var(--mindo-font-family) !important;
 }
 
-.workspace-leaf-content[data-type="contex-agent-view"] .contex-agent.contex-agent--font-comfortaa .contex-agent__chat-menu-button,
-.workspace-leaf-content[data-type="contex-agent-view"] .contex-agent.contex-agent--font-comfortaa .contex-agent__chat-menu-label,
-.workspace-leaf-content[data-type="contex-agent-view"] .contex-agent.contex-agent--font-comfortaa .contex-agent__input,
-.workspace-leaf-content[data-type="contex-agent-view"] .contex-agent.contex-agent--font-comfortaa .contex-agent__input::placeholder,
+.workspace-leaf-content[data-type="mindo-view"] .contex-agent.contex-agent--font-comfortaa .contex-agent__chat-menu-button,
+.workspace-leaf-content[data-type="mindo-view"] .contex-agent.contex-agent--font-comfortaa .contex-agent__chat-menu-label,
+.workspace-leaf-content[data-type="mindo-view"] .contex-agent.contex-agent--font-comfortaa .contex-agent__input,
+.workspace-leaf-content[data-type="mindo-view"] .contex-agent.contex-agent--font-comfortaa .contex-agent__input::placeholder,
 .contex-agent.contex-agent--font-comfortaa .contex-agent__chat-menu-button,
 .contex-agent.contex-agent--font-comfortaa .contex-agent__chat-menu-label,
 .contex-agent.contex-agent--font-comfortaa .contex-agent__input,

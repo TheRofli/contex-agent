@@ -17,28 +17,28 @@ from typing import Any
 import torch
 
 
-HOST = os.environ.get("CONTEX_SILERO_HOST", "127.0.0.1")
-PORT = int(os.environ.get("CONTEX_SILERO_PORT", "9100"))
+HOST = os.environ.get("MINDO_SILERO_HOST", "127.0.0.1")
+PORT = int(os.environ.get("MINDO_SILERO_PORT", "9100"))
 RUNTIME_DIR = Path(
     os.environ.get(
-        "CONTEX_SILERO_HOME",
-        Path.home() / "AppData" / "Local" / "ContexAgent" / "silero",
+        "MINDO_SILERO_HOME",
+        Path.home() / "AppData" / "Local" / "Mindo" / "silero",
     )
 )
-DEFAULT_VOICE = os.environ.get("CONTEX_SILERO_VOICE", "baya")
+DEFAULT_VOICE = os.environ.get("MINDO_SILERO_VOICE", "baya")
 MAX_CHUNK_LENGTH = 900
 
 MODEL_CONFIGS: dict[str, dict[str, Any]] = {
     "ru-v5_5": {
         "url": os.environ.get(
-            "CONTEX_SILERO_RU_MODEL_URL",
+            "MINDO_SILERO_RU_MODEL_URL",
             os.environ.get(
-                "CONTEX_SILERO_MODEL_URL",
+                "MINDO_SILERO_MODEL_URL",
                 "https://models.silero.ai/models/tts/ru/v5_5_ru.pt",
             ),
         ),
         "path": RUNTIME_DIR / "models" / "v5_5_ru.pt",
-        "sample_rate": int(os.environ.get("CONTEX_SILERO_SAMPLE_RATE", "48000")),
+        "sample_rate": int(os.environ.get("MINDO_SILERO_SAMPLE_RATE", "48000")),
         "language": "ru",
         "voices": {"baya", "eugene"},
     },
@@ -202,7 +202,7 @@ def get_model(model_id: str):
             return cached
 
         model_path = ensure_model_file(model_id)
-        torch.set_num_threads(int(os.environ.get("CONTEX_SILERO_THREADS", "4")))
+        torch.set_num_threads(int(os.environ.get("MINDO_SILERO_THREADS", "4")))
         loaded = torch.package.PackageImporter(str(model_path)).load_pickle(
             "tts_models",
             "model",

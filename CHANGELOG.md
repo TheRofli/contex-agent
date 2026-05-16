@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.2.0
+
+- Renamed public plugin identity from Contex Agent to Mindo.
+- Changed the Obsidian plugin id to `mindo`.
+- Updated release packaging to build `dist/mindo` and `mindo-release.json`.
+- Updated runtime helper names and local cache folders to use Mindo naming.
+- Kept `contex-core` as the internal Rust sidecar name for compatibility.
+
 ## 0.1.0
 
 - Added Contex Agent sidebar with active note context.

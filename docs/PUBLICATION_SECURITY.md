@@ -9,7 +9,7 @@ Use this checklist before making the repository public.
 - `.env` files
 - local vault content
 - downloaded model weights
-- `.contex-*` runtime folders
+- `.mindo-*` and legacy `.contex-*` runtime folders
 - `.venv-*`, `.python-stt`, `.cache`, `node_modules`
 - Rust `target`
 - debug logs that include local paths or user note contents
@@ -37,7 +37,7 @@ Recommended public/private split:
 
 ## License Position
 
-Contex Agent now uses a source-available license:
+Mindo now uses a source-available license:
 
 - users may download, install, run, and inspect it;
 - users may not repackage it as a competing product;
@@ -68,6 +68,6 @@ npm run package
 Then inspect:
 
 ```text
-dist/contex-agent
-dist/contex-agent-release.json
+dist/mindo
+dist/mindo-release.json
 ```
