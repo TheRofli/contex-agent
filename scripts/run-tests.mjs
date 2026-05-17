@@ -13,9 +13,14 @@ const esbuildCli = join(
   "esbuild"
 );
 
-const tests = discoverTests(join(pluginDir, "tests"))
+const discoveredTests = discoverTests(join(pluginDir, "tests"))
   .map((path) => relative(pluginDir, path).replaceAll("\\", "/"))
   .sort();
+const requestedTests = resolveRequestedTests(
+  discoveredTests,
+  process.argv.slice(2)
+);
+const tests = requestedTests.length ? requestedTests : discoveredTests;
 
 if (!tests.length) {
   console.error("No tests found.");
@@ -58,6 +63,40 @@ for (const test of tests) {
   if (run.status !== 0) {
     process.exit(run.status ?? 1);
   }
+}
+
+function resolveRequestedTests(discoveredTests, requested) {
+  if (!requested.length) {
+    return [];
+  }
+
+  const normalizedRequests = requested.map((entry) =>
+    entry.replaceAll("\\", "/").replace(/\/+/g, "/").replace(/^\.\//, "")
+  );
+  const matchedTests = new Set();
+  const missingRequests = [];
+
+  for (const request of normalizedRequests) {
+    const matchesForRequest = discoveredTests.filter(
+      (test) => test === request || basename(test) === request
+    );
+
+    if (!matchesForRequest.length) {
+      missingRequests.push(request);
+      continue;
+    }
+
+    for (const test of matchesForRequest) {
+      matchedTests.add(test);
+    }
+  }
+
+  if (missingRequests.length) {
+    console.error(`No matching tests found for: ${missingRequests.join(", ")}`);
+    process.exit(1);
+  }
+
+  return discoveredTests.filter((test) => matchedTests.has(test));
 }
 
 function discoverTests(dir) {
