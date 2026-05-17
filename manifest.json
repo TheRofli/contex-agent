@@ -1,7 +1,7 @@
 {
   "id": "mindo",
   "name": "Mindo",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "minAppVersion": "1.5.0",
   "description": "Talk to your vault with local voice, RAG, Wiki memory, safe edits, and Mindo Code.",
   "author": "Mindo",

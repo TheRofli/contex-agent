@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.3
+
+- Adjusted the Mindo home hero spacing so the greeting sits below the embedded whale logo instead of overlapping it on narrow installs.
+
 ## 0.2.2
 
 - Embedded the Mindo whale logo in the plugin bundle so Community Plugin installs do not show broken image placeholders when optional asset files are absent.

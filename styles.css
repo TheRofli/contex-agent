@@ -547,8 +547,8 @@ body.theme-dark .contex-agent__logo--dark {
   align-items: center;
   justify-content: center;
   width: min(420px, 88%);
-  gap: 0;
-  transform: translateY(clamp(-36px, -4vh, -18px));
+  gap: clamp(8px, 1.4vh, 14px);
+  transform: translateY(clamp(-28px, -3vh, -12px));
 }
 
 .contex-agent__home-logo-wrap {
@@ -562,8 +562,8 @@ body.theme-dark .contex-agent__logo--dark {
 
 .contex-agent__home-logo {
   display: block;
-  width: min(290px, 82%);
-  max-height: min(28vh, 260px);
+  width: min(250px, 76%);
+  max-height: min(24vh, 220px);
   object-fit: contain;
   opacity: 0.98;
   filter: drop-shadow(0 14px 24px rgba(0, 0, 0, 0.14));
@@ -571,7 +571,7 @@ body.theme-dark .contex-agent__logo--dark {
 
 .contex-agent__home-greeting {
   max-width: min(360px, 86%);
-  margin-top: clamp(-36px, -4vw, -24px);
+  margin-top: 0;
   color: var(--text-muted);
   font-size: 18px;
   font-weight: 650;

@@ -51,12 +51,12 @@ dist/mindo
 ## GitHub Release
 
 Create a tag that exactly matches `manifest.json` -> `version`.
-For version `0.2.2`, use `0.2.2`, not `v0.2.2`; the Obsidian submission bot
+For version `0.2.3`, use `0.2.3`, not `v0.2.3`; the Obsidian submission bot
 looks for a GitHub Release whose tag is exactly the manifest version.
 
 ```bash
-git tag 0.2.2
-git push origin 0.2.2
+git tag 0.2.3
+git push origin 0.2.3
 ```
 
 The `Release` workflow creates a GitHub release with:
@@ -116,7 +116,7 @@ submitting to the official Community Plugins catalog.
 ## Release Notes Template
 
 ```markdown
-## Mindo v0.2.2
+## Mindo v0.2.3
 
 Mindo is a local-first AI companion for Obsidian.
 
@@ -130,6 +130,6 @@ Highlights:
 - early Mindo Code planning workflow.
 
 Install:
-Download `mindo-0.2.2.zip`, extract it to
+Download `mindo-0.2.3.zip`, extract it to
 `Vault/.obsidian/plugins/mindo`, then enable the plugin in Obsidian.
 ```

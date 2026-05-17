@@ -40,10 +40,11 @@ assert.ok(
   )
 );
 assert.ok(
-  /\.contex-agent__home-greeting\s*\{[^}]*margin-top:\s*clamp\(-36px, -4vw, -24px\);/s.test(
+  /\.contex-agent__home-hero\s*\{[^}]*gap:\s*clamp\(8px, 1\.4vh, 14px\);/s.test(
     styles
   )
 );
+assert.ok(/\.contex-agent__home-greeting\s*\{[^}]*margin-top:\s*0;/s.test(styles));
 assert.ok(/\.contex-agent__home-greeting\s*\{[^}]*font-size:\s*18px;/s.test(styles));
 assert.ok(styles.includes(".contex-agent.contex-agent--font-obsidian"));
 for (const label of removedFontLabels) {
