@@ -11,6 +11,7 @@ const comfortaaPath = join(
 );
 const stylesPath = join(process.cwd(), "styles.css");
 const sidebarViewPath = join(process.cwd(), "src", "views", "AgentSidebarView.ts");
+const logoDataPath = join(process.cwd(), "src", "views", "mindoLogoData.ts");
 const packageScriptPath = join(process.cwd(), "scripts", "package-plugin.mjs");
 const removedFontDirs = [["sour", "gummy"].join("-"), ["neu", "cha"].join("")];
 const removedFontLabels = [["Sour", "Gummy"].join(" "), ["Neu", "cha"].join("")];
@@ -52,9 +53,12 @@ for (const label of removedFontLabels) {
 }
 
 const sidebarView = readFileSync(sidebarViewPath, "utf8");
+const logoData = readFileSync(logoDataPath, "utf8");
 assert.ok(sidebarView.includes('"Mindo Runtime Comfortaa"'));
 assert.ok(sidebarView.includes("MINDO_LOGO_DATA_URL"));
-assert.ok(sidebarView.includes("data:image/svg+xml"));
+assert.ok(!sidebarView.includes("MINDO_LOGO_SVG"));
+assert.ok(logoData.includes("data:image/png;base64"));
+assert.ok(logoData.length < 120000);
 assert.ok(sidebarView.includes('fileName === "assets/logo.png"'));
 assert.ok(
   /this\.getPluginAssetResourcePath\(\s*"assets\/fonts\/comfortaa\/Comfortaa-Regular\.ttf"\s*\)/s.test(

@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.4
+
+- Replaced the hand-drawn inline SVG logo with a compact embedded PNG generated from the real Mindo logo, preserving the correct whale shape in Community Plugin installs.
+
 ## 0.2.3
 
 - Adjusted the Mindo home hero spacing so the greeting sits below the embedded whale logo instead of overlapping it on narrow installs.

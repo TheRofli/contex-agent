@@ -12,6 +12,7 @@ import {
   getCurrentNoteContext,
   getCurrentNoteLabel
 } from "../context/currentNoteContext";
+import { MINDO_LOGO_DATA_URL } from "./mindoLogoData";
 import { getSelectedTextContext } from "../context/selectedTextContext";
 import {
   requestLlmChatCompletion,
@@ -272,19 +273,6 @@ const CONTEXT_METER_RESERVED_TOKENS = 2500;
 const CONTEXT_METER_CHARS_PER_TOKEN = 4;
 const PROJECT_MEMORY_FOLDER = "Mindo Memory";
 const PROJECT_RESEARCH_FOLDER = "Mindo Research";
-const MINDO_LOGO_SVG = [
-  '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 168">',
-  '<g stroke="#15131a" stroke-linecap="round" stroke-linejoin="round">',
-  '<path d="M49 98c8-43 43-70 90-64 32 4 56 19 68 43 8-13 27-9 25 9 16-8 31-4 33 7-10 18-25 31-44 37-10 3-18 1-24-6-10 16-31 24-63 24H66c-12 0-21-6-24-17-3-10 0-23 7-33Z" fill="#9b93ee" stroke-width="8"/>',
-  '<path d="M139 33c-4-18-26-26-43-17-12 7-7 20 8 20 15 0 28 3 35 16 7-13 21-17 37-16 15 0 20-13 8-20-17-9-41-1-45 17Z" fill="#dfc8ff" stroke-width="8"/>',
-  '<path d="M42 119c24-13 73-22 146 4l-7 27H67c-12 0-21-6-24-17l-1-14Z" fill="#fff" stroke-width="8"/>',
-  '<path d="M76 111v38M103 105v44M132 106v43M160 111v38" fill="none" stroke-width="7"/>',
-  '<path d="M201 77c6 11 8 29-1 47" fill="none" stroke-width="8"/>',
-  '<path d="M111 80h.5M137 80h.5" fill="none" stroke-width="9"/>',
-  '</g>',
-  '</svg>'
-].join("");
-const MINDO_LOGO_DATA_URL = `data:image/svg+xml,${encodeURIComponent(MINDO_LOGO_SVG)}`;
 
 export class ContexAgentView extends ItemView {
   private plugin: ContexAgentPlugin;
