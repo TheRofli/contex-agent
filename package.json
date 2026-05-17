@@ -7,7 +7,7 @@
     "dev": "node scripts/embed-runtime-assets.mjs && node esbuild.config.mjs --watch",
     "build": "node scripts/embed-runtime-assets.mjs && tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
     "test": "node scripts/embed-runtime-assets.mjs && node scripts/run-tests.mjs",
-    "verify": "npm run test && npm run core:test && npm run build",
+    "verify": "npm run build && npm run test && npm run core:test && node scripts/run-tests.mjs tests/bundleBudget.test.ts",
     "package": "npm run build && node scripts/package-plugin.mjs",
     "release:check": "npm run verify && node scripts/package-plugin.mjs --check",
     "core:test": "node scripts/run-cargo.mjs test --manifest-path tools/contex_core/Cargo.toml",
