@@ -16,6 +16,7 @@ import {
   getPluginAssetResourcePath,
   installRuntimeComfortaaFont
 } from "./sidebarAssetResources";
+import { renderHomeHero } from "./homeHeroRenderer";
 import { getSelectedTextContext } from "../context/selectedTextContext";
 import {
   requestLlmChatCompletion,
@@ -1839,22 +1840,11 @@ export class ContexAgentView extends ItemView {
       return;
     }
 
-    const homeHero = this.suggestionsEl.createDiv({
-      cls: "contex-agent__home-hero"
-    });
-    const homeLogoWrap = homeHero.createDiv({
-      cls: "contex-agent__home-logo-wrap"
-    });
-    homeLogoWrap.createEl("img", {
-      cls: "contex-agent__home-logo",
-      attr: {
-        src: this.getPluginAssetResourcePath("assets/logo.png"),
-        alt: this.t("appName")
-      }
-    });
-    homeHero.createDiv({
-      cls: "contex-agent__home-greeting",
-      text: this.t("homeGreeting")
+    renderHomeHero({
+      parentEl: this.suggestionsEl,
+      greeting: this.t("homeGreeting"),
+      createLogo: (parentEl, className) =>
+        this.createMindoLogoImage(parentEl, className)
     });
   }
 
