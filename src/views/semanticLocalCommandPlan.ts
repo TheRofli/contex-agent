@@ -23,6 +23,7 @@ export interface SemanticLocalCommand {
   original?: string;
   suggested?: string;
   query?: string;
+  candidatePath?: string;
   replacements?: SemanticVoiceTextReplacement[];
 }
 
@@ -78,6 +79,10 @@ function parseSemanticLocalCommandObject(
     query:
       typeof parsed.query === "string"
         ? cleanVoiceSearchQuery(parsed.query)
+        : undefined,
+    candidatePath:
+      typeof parsed.candidatePath === "string"
+        ? cleanVoiceSearchQuery(parsed.candidatePath)
         : undefined,
     replacements: Array.isArray(parsed.replacements)
       ? parsed.replacements

@@ -6,8 +6,10 @@ import {
 } from "../semanticLocalCommandPlan";
 import { buildToolRouterPrompt } from "../../router/toolRouterPrompt";
 import { collectVaultCandidates } from "../../router/vaultCandidates";
-import { buildVaultCandidatePromptContextFromPaths } from "../../router/vaultCandidatePromptContext";
+import { buildVaultCandidatePromptContextDataFromPaths } from "../../router/vaultCandidatePromptContext";
 import { buildSemanticLocalCommandPrompt } from "../../router/semanticLocalCommandPrompt";
+import { decideVaultActionCandidate } from "../../router/vaultActionDecision";
+import type { VaultCandidate } from "../../router/vaultCandidates";
 
 export interface SemanticLocalCommandClassifierDeps {
   app: App;
@@ -57,8 +59,8 @@ export class SemanticLocalCommandClassifier {
       activeNotePath: note?.file.path ?? null,
       candidates: routerCandidates
     });
-    const vaultCandidateContext =
-      buildVaultCandidatePromptContextFromPaths(
+    const vaultCandidatePromptContext =
+      buildVaultCandidatePromptContextDataFromPaths(
         this.deps.app.vault.getMarkdownFiles().map((file) => file.path),
         commandText,
         effectiveCommandText,
@@ -76,7 +78,7 @@ export class SemanticLocalCommandClassifier {
       mentionedPaths,
       lastResultPaths,
       toolRouterContext,
-      vaultCandidateContext
+      vaultCandidateContext: vaultCandidatePromptContext.text
     });
     const response = await this.deps.requestCompletion(this.deps.getSettings(), [
       {
@@ -87,6 +89,64 @@ export class SemanticLocalCommandClassifier {
       }
     ]);
 
-    return parseSemanticLocalCommandPlan(response);
+    const commands = parseSemanticLocalCommandPlan(response);
+
+    return commands
+      ? applyVaultActionDecisions(
+          commands,
+          mergeVaultCandidates(
+            routerCandidates,
+            vaultCandidatePromptContext.selectableFileCandidates
+          )
+        )
+      : null;
   }
+}
+
+function mergeVaultCandidates(
+  primaryCandidates: VaultCandidate[],
+  secondaryCandidates: VaultCandidate[]
+): VaultCandidate[] {
+  const byPath = new Map<string, VaultCandidate>();
+
+  for (const candidate of [...primaryCandidates, ...secondaryCandidates]) {
+    const existing = byPath.get(candidate.path);
+
+    if (!existing || candidate.score > existing.score) {
+      byPath.set(candidate.path, candidate);
+    }
+  }
+
+  return Array.from(byPath.values());
+}
+
+function applyVaultActionDecisions(
+  commands: SemanticLocalCommand[],
+  routerCandidates: VaultCandidate[]
+): SemanticLocalCommand[] | null {
+  const resolvedCommands: SemanticLocalCommand[] = [];
+
+  for (const command of commands) {
+    if (command.action !== "open_file") {
+      resolvedCommands.push(command);
+      continue;
+    }
+
+    const decision = decideVaultActionCandidate({
+      candidates: routerCandidates,
+      llmCandidatePath: command.candidatePath ?? command.query
+    });
+
+    if (decision.kind !== "direct") {
+      return null;
+    }
+
+    resolvedCommands.push({
+      ...command,
+      query: decision.path,
+      candidatePath: decision.path
+    });
+  }
+
+  return resolvedCommands.length ? resolvedCommands : null;
 }

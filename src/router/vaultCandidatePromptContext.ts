@@ -4,6 +4,12 @@ import {
   scoreOpenFilePathCandidate,
   scoreVaultFolderCandidate
 } from "../resolver/openFileResolver";
+import type { VaultCandidate } from "./vaultCandidates";
+
+export interface VaultCandidatePromptContext {
+  text: string;
+  selectableFileCandidates: VaultCandidate[];
+}
 
 export function buildVaultCandidatePromptContextFromPaths(
   markdownPaths: string[],
@@ -11,6 +17,20 @@ export function buildVaultCandidatePromptContextFromPaths(
   effectiveCommandText?: string,
   relatedPaths: string[] = []
 ): string {
+  return buildVaultCandidatePromptContextDataFromPaths(
+    markdownPaths,
+    commandText,
+    effectiveCommandText,
+    relatedPaths
+  ).text;
+}
+
+export function buildVaultCandidatePromptContextDataFromPaths(
+  markdownPaths: string[],
+  commandText: string,
+  effectiveCommandText?: string,
+  relatedPaths: string[] = []
+): VaultCandidatePromptContext {
   const queryCandidates = getVaultCandidateQueries(
     commandText,
     effectiveCommandText
@@ -55,7 +75,8 @@ export function buildVaultCandidatePromptContextFromPaths(
         .map((path) => ({
           path,
           basename: getBasename(path),
-          folder: getFolderPath(path)
+          folder: getFolderPath(path),
+          score: 0
         }))
     : [];
   const folders = Array.from(
@@ -87,7 +108,7 @@ export function buildVaultCandidatePromptContextFromPaths(
           score: 0
         }));
 
-  return [
+  const text = [
     "Vault candidates from the user's real Obsidian vault:",
     "If an action needs a file or folder, prefer one of these exact paths/names instead of inventing a path.",
     "",
@@ -121,6 +142,14 @@ export function buildVaultCandidatePromptContextFromPaths(
           .join("\n")
       : "(none)"
   ].join("\n");
+
+  return {
+    text,
+    selectableFileCandidates: [
+      ...fileCandidates,
+      ...contextNearFiles
+    ]
+  };
 }
 
 function getVaultCandidateQueries(

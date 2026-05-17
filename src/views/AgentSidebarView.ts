@@ -130,7 +130,6 @@ import {
   type UiTextKey
 } from "../i18n";
 import {
-  parseSemanticLocalCommandPlan,
   type SemanticLocalCommand
 } from "./semanticLocalCommandPlan";
 import {
@@ -158,8 +157,6 @@ import {
   trimChatTitle
 } from "../chat/chatMessages";
 import { isVaultLocalDescriptionRequest } from "../chat/autoWebGuards";
-import { buildToolRouterPrompt } from "../router/toolRouterPrompt";
-import { collectVaultCandidates } from "../router/vaultCandidates";
 import { planContextWorkflow } from "../web/workflowPlanner";
 import {
   ensureContexWikiStructure,
@@ -197,10 +194,9 @@ import { LiveDialogueController } from "./controllers/LiveDialogueController";
 import { ModelProfileController } from "./controllers/ModelProfileController";
 import { OpenFileCommandController } from "./controllers/OpenFileCommandController";
 import { VoiceController } from "./controllers/VoiceController";
+import { SemanticLocalCommandClassifier } from "./controllers/SemanticLocalCommandClassifier";
 import {
-  rankOpenFilePathCandidates,
-  parseOpenFileQueryParts as parseOpenFileResolverQueryParts,
-  scoreOpenFilePathCandidate
+  rankOpenFilePathCandidates
 } from "../resolver/openFileResolver";
 import {
   ActionTimeline,
@@ -7410,249 +7406,21 @@ export class ContexAgentView extends ItemView {
     return commands?.[0] ?? null;
   }
 
-  private buildVaultCandidatePromptContext(
-    commandText: string,
-    effectiveCommandText?: string
-  ): string {
-    const queryCandidates = Array.from(
-      new Set(
-        [
-          effectiveCommandText,
-          commandText,
-          effectiveCommandText ? parseVoiceOpenFileQuery(effectiveCommandText) : null,
-          parseVoiceOpenFileQuery(commandText),
-          effectiveCommandText ? extractRequestedFolderName(effectiveCommandText) : null,
-          extractRequestedFolderName(commandText)
-        ]
-          .map((query) => query?.trim() ?? "")
-          .filter((query) => query.length >= 2)
-      )
-    );
-    const files = this.app.vault.getMarkdownFiles();
-    const fileCandidates = files
-      .map((file) => ({
-        file,
-        score: Math.max(
-          ...queryCandidates.map((query) => {
-            const parts = parseOpenFileResolverQueryParts(query);
-            return scoreOpenFilePathCandidate(
-              file.path,
-              parts.fileQuery,
-              parts.folderQuery
-            );
-          }),
-          0
-        )
-      }))
-      .filter((candidate) => candidate.score > 0)
-      .sort((left, right) => right.score - left.score)
-      .slice(0, 16);
-    const scoredFilePaths = new Set(
-      fileCandidates.map((candidate) => candidate.file.path)
-    );
-    const activePath = this.app.workspace.getActiveFile()?.path ?? "";
-    const relatedFolders = new Set(
-      [
-        activePath,
-        ...this.findLastMentionedMarkdownPaths().slice(0, 5),
-        ...this.voiceSessionMemory.lastFoundFiles
-          .slice(0, 6)
-          .map((result) => result.path)
-      ]
-        .map((path) => getFolderPath(path))
-        .filter(Boolean)
-    );
-    const contextNearFiles = relatedFolders.size
-      ? files
-          .filter(
-            (file) =>
-              !scoredFilePaths.has(file.path) &&
-              relatedFolders.has(getFolderPath(file.path))
-          )
-          .sort((left, right) => left.path.localeCompare(right.path))
-          .slice(0, 24)
-      : [];
-    const folders = Array.from(
-      new Set(files.map((file) => getFolderPath(file.path)).filter(Boolean))
-    );
-    const scoredFolderCandidates = folders
-      .map((folder) => ({
-        folder,
-        score: Math.max(
-          ...queryCandidates.map((query) =>
-            scoreVaultFolderCandidate(folder, normalizeOpenFileValue(query))
-          ),
-          0
-        )
-      }))
-      .filter((candidate) => candidate.score > 0)
-      .sort((left, right) => right.score - left.score)
-      .slice(0, 12);
-    const folderCandidates = scoredFolderCandidates.length
-      ? scoredFolderCandidates
-      : folders
-          .sort((left, right) => left.localeCompare(right))
-          .slice(0, 20)
-          .map((folder) => ({
-            folder,
-            score: 0
-          }));
-
-    return [
-      "Vault candidates from the user's real Obsidian vault:",
-      "If an action needs a file or folder, prefer one of these exact paths/names instead of inventing a path.",
-      "",
-      "Folder candidates:",
-      folderCandidates.length
-        ? folderCandidates
-            .map(
-              (candidate, index) =>
-                `${index + 1}. ${candidate.folder} (score ${candidate.score})`
-            )
-            .join("\n")
-        : "(none)",
-      "",
-      "File candidates:",
-      fileCandidates.length
-        ? fileCandidates
-            .map(
-              (candidate, index) =>
-                `${index + 1}. ${candidate.file.path} (title: ${candidate.file.basename}, folder: ${getFolderPath(candidate.file.path) || "/"}, score ${candidate.score})`
-            )
-            .join("\n")
-        : "(none)",
-      "",
-      "Context-near file candidates:",
-      contextNearFiles.length
-        ? contextNearFiles
-            .map(
-              (file, index) =>
-                `${index + 1}. ${file.path} (title: ${file.basename}, folder: ${getFolderPath(file.path) || "/"})`
-            )
-            .join("\n")
-        : "(none)"
-    ].join("\n");
-  }
-
   private async classifySemanticLocalCommandPlan(
     commandText: string,
     effectiveCommandText?: string
   ): Promise<SemanticLocalCommand[] | null> {
-    const note = await this.readActiveMarkdownNote();
-    const mentionedPaths = this.findLastMentionedMarkdownPaths().slice(0, 5);
-    const lastResults = this.voiceSessionMemory.lastFoundFiles.slice(0, 6);
-    const routerUserText =
-      effectiveCommandText && effectiveCommandText !== commandText
-        ? `${commandText}\nCorrected/latest command segment: ${effectiveCommandText}`
-        : commandText;
-    const routerCandidates = collectVaultCandidates(
-      this.app,
-      routerUserText,
-      24
-    );
-    const toolRouterContext = buildToolRouterPrompt({
-      userText: routerUserText,
-      activeNotePath: note?.file.path ?? null,
-      candidates: routerCandidates
+    const classifier = new SemanticLocalCommandClassifier({
+      app: this.app,
+      getSettings: () => this.plugin.settings,
+      readActiveMarkdownNote: () => this.readActiveMarkdownNote(),
+      findLastMentionedMarkdownPaths: () => this.findLastMentionedMarkdownPaths(),
+      getLastFoundFilePaths: () =>
+        this.voiceSessionMemory.lastFoundFiles.map((result) => result.path),
+      requestCompletion: requestLlmChatCompletion
     });
-    const vaultCandidateContext = this.buildVaultCandidatePromptContext(
-      commandText,
-      effectiveCommandText
-    );
-    const prompt = [
-      "You are a local command parser for an Obsidian plugin.",
-      "Return JSON only. Do not explain. Do not claim you performed the action.",
-      "",
-      "Choose either one action or an ordered action plan:",
-      "- replace_text: edit text in the active note by creating a preview diff.",
-      "- replace_selection: replace selected text or the obvious current line.",
-      "- open_file: open a note by query.",
-      "- open_last_file: open the note the user just referred to as this/that note/file.",
-      "- search_vault: search notes.",
-      "- semantic_vault: answer using semantically related vault notes.",
-      "- research_web: search the internet/web.",
-      "- research_note: create and open a new note using vault context and current web context when needed.",
-      "- create_note: create and open a new note.",
-      "- update_note: draft an inline diff update for the active note.",
-      "- read_last_answer: read the latest assistant answer aloud.",
-      "- stop_speaking: stop current TTS playback.",
-      "- none: normal chat, not a local action.",
-      "",
-      "JSON shape:",
-      '{"actions":[{"action":"open_file","query":"..."},{"action":"replace_text","original":"...","suggested":"..."}]}',
-      '{"action":"replace_text","original":"...","suggested":"...","replacements":[{"original":"...","suggested":"..."}]}',
-      '{"action":"replace_selection","suggested":"..."}',
-      '{"action":"open_file","query":"..."}',
-      '{"action":"open_last_file"}',
-      '{"action":"search_vault","query":"..."}',
-      '{"action":"semantic_vault","query":"..."}',
-      '{"action":"research_web","query":"..."}',
-      '{"action":"research_note","query":"..."}',
-      '{"action":"create_note","query":"..."}',
-      '{"action":"update_note","query":"..."}',
-      '{"action":"read_last_answer"}',
-      '{"action":"stop_speaking"}',
-      '{"action":"none"}',
-      "",
-      "Rules:",
-      "- Read the whole command semantically, not by first keyword priority.",
-      "- Do not include canceled earlier actions. If the user starts with edit/open but then says no/wait/instead and asks to create a new researched note, return only research_note.",
-      "- Use actions only when the user truly wants multiple real operations in sequence, such as open a file and then preview a replacement in that opened file.",
-      "- For open-then-edit commands, return actions ordered as open_file first, then replace_text/update_note.",
-      "- For create/research/update actions, put the final cleaned user request in query so the executor uses the corrected intent, not the whole messy sentence.",
-      "- If the user corrects themselves with words like 'точнее', 'вернее', 'извиняюсь', 'нет', 'а не', 'actually', or 'instead', the later corrected intent wins.",
-      "- Folder mentions are important. If the user says 'in folder X' / 'в папке X', preserve that folder meaning in the chosen action.",
-      "- For open_file, if a file candidate is clearly intended, return its exact vault path in query.",
-      "- For open_file, use the listed File candidates and Context-near file candidates as the ground truth. Resolve fuzzy speech by comparing meaning, title, folder, active note, and recent context; do not rely on a fixed language-specific alias list.",
-      "- For open_file, do not substitute the active/current note when the user names a different file. Use the closest spoken filename candidate, or keep the user's requested title in query if no candidate is clear.",
-      "- If multiple open_file candidates are plausible and none is clearly intended, return none so the chat can ask a short clarification instead of opening the wrong note.",
-      "- For create_note or research_note, preserve the intended target folder in query when the user mentions one.",
-      "- If a command contains both open and create, decide by the user's final corrected intent, not by whichever word appears first.",
-      "- If the user is asking how to do something or asking an explanatory question, choose none unless they clearly request an actual vault action.",
-      "- Interpret Russian speech-to-text noise by meaning. Examples: 'ная' or 'ня я' may mean 'на я'.",
-      "- If the user says 'поменяй на ...' and the active note has one obvious editable line, use that line as original.",
-      "- If the user asks to open 'эту заметку', 'этот файл', 'то что нашла', choose open_last_file.",
-      "- If the user gives multiple replacements, put them in replacements.",
-      "- If the user asks to update, refresh, verify, make current, or rewrite the active note itself, choose update_note.",
-      "- If the user asks to create a current/researched/modern/up-to-date technology note, page, report, plan, or brief, choose research_note.",
-      "- If a create-note request also asks for web research, internet research, current facts, modern features, latest trends, or freshness by date, choose research_note.",
-      "- If the user asks to create/save/make a new note, choose create_note.",
-      "- If the user asks to read or voice the latest answer, choose read_last_answer.",
-      "- If the user asks to stop reading/speaking, choose stop_speaking.",
-      "- Never return assistant prose.",
-      "",
-      toolRouterContext,
-      "",
-      `Active note path: ${note?.file.path ?? "(none)"}`,
-      "Active note excerpt:",
-      note?.content.slice(0, 4000) ?? "",
-      "",
-      "Recently mentioned note paths:",
-      mentionedPaths.join("\n") || "(none)",
-      "",
-      "Last vault search results:",
-      lastResults
-        .map((result, index) => `${index + 1}. ${result.path}`)
-        .join("\n") || "(none)",
-      "",
-      vaultCandidateContext,
-      "",
-      "User command:",
-      commandText,
-      effectiveCommandText && effectiveCommandText !== commandText
-        ? ["", "Corrected/latest command segment:", effectiveCommandText].join("\n")
-        : ""
-    ].join("\n");
-    const response = await requestLlmChatCompletion(this.plugin.settings, [
-      {
-        id: `${Date.now()}-semantic-local-command`,
-        role: "user",
-        content: prompt,
-        createdAt: Date.now()
-      }
-    ]);
 
-    return parseSemanticLocalCommandPlan(response);
+    return classifier.classifyPlan(commandText, effectiveCommandText);
   }
 
   private async previewVoiceReplacement(

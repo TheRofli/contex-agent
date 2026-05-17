@@ -19,7 +19,8 @@ const multi = parseSemanticLocalCommandPlan(
     actions: [
       {
         action: "open_file",
-        query: "test in folder Test"
+        query: "test in folder Test",
+        candidatePath: "Test/Test.md"
       },
       {
         action: "replace_text",
@@ -36,6 +37,7 @@ const multi = parseSemanticLocalCommandPlan(
 
 assert.equal(multi?.length, 2);
 assert.equal(multi?.[0]?.action, "open_file");
+assert.equal(multi?.[0]?.candidatePath, "Test/Test.md");
 assert.equal(multi?.[1]?.action, "replace_text");
 assert.deepEqual(multi?.[1]?.replacements, [
   {
