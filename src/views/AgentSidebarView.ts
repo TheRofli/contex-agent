@@ -12,7 +12,10 @@ import {
   getCurrentNoteContext,
   getCurrentNoteLabel
 } from "../context/currentNoteContext";
-import { MINDO_LOGO_DATA_URL } from "./mindoLogoData";
+import {
+  getPluginAssetResourcePath,
+  installRuntimeComfortaaFont
+} from "./sidebarAssetResources";
 import { getSelectedTextContext } from "../context/selectedTextContext";
 import {
   requestLlmChatCompletion,
@@ -434,40 +437,11 @@ export class ContexAgentView extends ItemView {
   }
 
   private getPluginAssetResourcePath(fileName: string): string {
-    if (fileName === "assets/logo.png") {
-      return MINDO_LOGO_DATA_URL;
-    }
-
-    const pluginDir = this.plugin.manifest.dir ?? ".obsidian/plugins/mindo";
-    const vaultPath = normalizePath(`${pluginDir}/${fileName}`);
-    return this.app.vault.adapter.getResourcePath(vaultPath);
+    return getPluginAssetResourcePath(this.app, this.plugin.manifest, fileName);
   }
 
   private installRuntimeComfortaaFont(root: HTMLElement): void {
-    const fontResourcePath = this.getPluginAssetResourcePath(
-      "assets/fonts/comfortaa/Comfortaa-Regular.ttf"
-    );
-    root.style.setProperty(
-      "--mindo-font-family",
-      '"Mindo Runtime Comfortaa", "Mindo Comfortaa", var(--font-interface)'
-    );
-
-    const styleEl = root.createEl("style", {
-      attr: {
-        type: "text/css"
-      }
-    });
-    styleEl.setText(
-      [
-        "@font-face {",
-        '  font-family: "Mindo Runtime Comfortaa";',
-        `  src: url(${JSON.stringify(fontResourcePath)}) format("truetype");`,
-        "  font-style: normal;",
-        "  font-weight: 400 700;",
-        "  font-display: swap;",
-        "}"
-      ].join("\n")
-    );
+    installRuntimeComfortaaFont(root);
   }
 
   private createMindoLogoImage(parentEl: HTMLElement, className: string): HTMLImageElement {

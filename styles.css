@@ -1,15 +1,7 @@
-@font-face {
-  font-family: "Mindo Comfortaa";
-  src: url("./assets/fonts/comfortaa/Comfortaa-Regular.ttf") format("truetype");
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-}
-
 .contex-agent {
   --mindo-accent: #7b6cf6;
   --mindo-ink: #111018;
-  --mindo-font-family: "Mindo Comfortaa", var(--font-interface);
+  --mindo-font-family: "Mindo Runtime Comfortaa", "Mindo Comfortaa", var(--font-interface);
   --mindo-drawn-border: color-mix(in srgb, var(--mindo-ink) 64%, var(--background-modifier-border));
   --mindo-menu-bg: color-mix(in srgb, var(--background-primary) 94%, var(--background-secondary));
   display: flex;

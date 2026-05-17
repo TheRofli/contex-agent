@@ -4,9 +4,9 @@
   "description": "Talk to your vault with local voice, RAG, Wiki memory, safe edits, and Mindo Code.",
   "main": "main.js",
   "scripts": {
-    "dev": "node esbuild.config.mjs --watch",
-    "build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
-    "test": "node scripts/run-tests.mjs",
+    "dev": "node scripts/embed-runtime-assets.mjs && node esbuild.config.mjs --watch",
+    "build": "node scripts/embed-runtime-assets.mjs && tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
+    "test": "node scripts/embed-runtime-assets.mjs && node scripts/run-tests.mjs",
     "verify": "npm run test && npm run core:test && npm run build",
     "package": "npm run build && node scripts/package-plugin.mjs",
     "release:check": "npm run verify && node scripts/package-plugin.mjs --check",

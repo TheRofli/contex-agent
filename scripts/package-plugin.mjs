@@ -20,10 +20,7 @@ const checkOnly = process.argv.includes("--check");
 const requiredFiles = [
   "manifest.json",
   "main.js",
-  "styles.css",
-  "assets/fonts/comfortaa/Comfortaa-Regular.ttf",
-  "assets/fonts/comfortaa/OFL.txt",
-  "assets/fonts/comfortaa/SOURCE.md"
+  "styles.css"
 ];
 const optionalFiles = [
   "README.md",
@@ -32,7 +29,12 @@ const optionalFiles = [
   "versions.json",
   "docs/RELEASE.md"
 ];
-const optionalDirectories = ["bin", "tools/stt_server", "tools/tts_server"];
+const optionalDirectories = [
+  "assets/fonts/comfortaa",
+  "bin",
+  "tools/stt_server",
+  "tools/tts_server"
+];
 const ignoredDirectoryNames = new Set([
   "node_modules",
   "target",

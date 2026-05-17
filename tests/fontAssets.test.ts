@@ -11,7 +11,9 @@ const comfortaaPath = join(
 );
 const stylesPath = join(process.cwd(), "styles.css");
 const sidebarViewPath = join(process.cwd(), "src", "views", "AgentSidebarView.ts");
+const sidebarAssetsPath = join(process.cwd(), "src", "views", "sidebarAssetResources.ts");
 const logoDataPath = join(process.cwd(), "src", "views", "mindoLogoData.ts");
+const fontDataPath = join(process.cwd(), "src", "views", "mindoFontData.ts");
 const packageScriptPath = join(process.cwd(), "scripts", "package-plugin.mjs");
 const removedFontDirs = [["sour", "gummy"].join("-"), ["neu", "cha"].join("")];
 const removedFontLabels = [["Sour", "Gummy"].join(" "), ["Neu", "cha"].join("")];
@@ -22,8 +24,9 @@ for (const dirName of removedFontDirs) {
 }
 
 const styles = readFileSync(stylesPath, "utf8");
-assert.ok(styles.includes('font-family: "Mindo Comfortaa"'));
-assert.ok(styles.includes("./assets/fonts/comfortaa/Comfortaa-Regular.ttf"));
+assert.ok(styles.includes('"Mindo Comfortaa"'));
+assert.ok(styles.includes('"Mindo Runtime Comfortaa"'));
+assert.ok(!styles.includes("./assets/fonts/comfortaa/Comfortaa-Regular.ttf"));
 assert.ok(/\.contex-agent\s*\{[^}]*font-family:\s*var\(--mindo-font-family\);/s.test(styles));
 assert.ok(
   styles.includes(
@@ -53,24 +56,31 @@ for (const label of removedFontLabels) {
 }
 
 const sidebarView = readFileSync(sidebarViewPath, "utf8");
+const sidebarAssets = readFileSync(sidebarAssetsPath, "utf8");
 const logoData = readFileSync(logoDataPath, "utf8");
-assert.ok(sidebarView.includes('"Mindo Runtime Comfortaa"'));
-assert.ok(sidebarView.includes("MINDO_LOGO_DATA_URL"));
+const fontData = readFileSync(fontDataPath, "utf8");
+assert.ok(sidebarView.includes("installRuntimeComfortaaFont(root);"));
+assert.ok(sidebarAssets.includes('"Mindo Runtime Comfortaa"'));
+assert.ok(sidebarAssets.includes("MINDO_LOGO_DATA_URL"));
 assert.ok(!sidebarView.includes("MINDO_LOGO_SVG"));
 assert.ok(logoData.includes("data:image/png;base64"));
 assert.ok(logoData.length < 120000);
-assert.ok(sidebarView.includes('fileName === "assets/logo.png"'));
+assert.ok(fontData.includes("data:font/ttf;base64,"));
+assert.ok(sidebarAssets.includes('fileName === "assets/logo.png"'));
 assert.ok(
-  /this\.getPluginAssetResourcePath\(\s*"assets\/fonts\/comfortaa\/Comfortaa-Regular\.ttf"\s*\)/s.test(
+  !/this\.getPluginAssetResourcePath\(\s*"assets\/fonts\/comfortaa\/Comfortaa-Regular\.ttf"\s*\)/s.test(
     sidebarView
   )
 );
-assert.ok(/root\.style\.setProperty\(\s*"--mindo-font-family"/s.test(sidebarView));
-assert.ok(sidebarView.includes("JSON.stringify(fontResourcePath)"));
+assert.ok(/root\.style\.setProperty\(\s*"--mindo-font-family"/s.test(sidebarAssets));
+assert.ok(sidebarAssets.includes("JSON.stringify(MINDO_FONT_DATA_URL)"));
 
 const packageScript = readFileSync(packageScriptPath, "utf8");
 assert.ok(!packageScript.includes("assets/logo.png"));
-assert.ok(packageScript.includes("assets/fonts/comfortaa/Comfortaa-Regular.ttf"));
+assert.ok(packageScript.includes('"assets/fonts/comfortaa"'));
+assert.ok(!packageScript.includes('"assets/fonts/comfortaa/Comfortaa-Regular.ttf",'));
+assert.ok(!packageScript.includes('"assets/fonts/comfortaa/OFL.txt",'));
+assert.ok(!packageScript.includes('"assets/fonts/comfortaa/SOURCE.md",'));
 assert.ok(!packageScript.includes('"logo.png"'));
 assert.ok(!packageScript.includes("contex_black.png"));
 assert.ok(!packageScript.includes("contex_white.png"));
