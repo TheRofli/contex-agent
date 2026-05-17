@@ -29,6 +29,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Community release smoke
+        run: node scripts/run-tests.mjs tests/communityReleaseSmoke.test.ts
+
       - name: Verify
         run: npm run verify
 

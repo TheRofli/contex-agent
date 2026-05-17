@@ -113,6 +113,8 @@ if (versions[manifest.version] !== manifest.minAppVersion) {
   process.exit(1);
 }
 
+assertCommunityReleaseAssets();
+
 if (checkOnly) {
   console.log("Release package check passed.");
   process.exit(0);
@@ -146,6 +148,111 @@ writeFileSync(
 
 console.log(`Release package created: ${relative(pluginDir, distDir)}`);
 console.log(`Files: ${packageManifest.length}`);
+
+function assertCommunityReleaseAssets() {
+  const mainJs = readFileSync(join(pluginDir, "main.js"), "utf8");
+  const stylesCss = readFileSync(join(pluginDir, "styles.css"), "utf8");
+  const unsafeCssUrls = extractCssUrlValues(stylesCss).filter(
+    (value) => !isSafeCommunityCssUrl(value)
+  );
+
+  if (!mainJs.includes("data:image/png;base64")) {
+    console.error("main.js must embed the Mindo logo data URL.");
+    process.exit(1);
+  }
+
+  if (!mainJs.includes("data:font/ttf;base64")) {
+    console.error("main.js must embed the Mindo font data URL.");
+    process.exit(1);
+  }
+
+  if (unsafeCssUrls.length) {
+    console.error(
+      `styles.css must not depend on non-data url(...) assets: ${unsafeCssUrls
+        .map((value) => JSON.stringify(value || "<empty>"))
+        .join(", ")}`
+    );
+    process.exit(1);
+  }
+}
+
+function extractCssUrlValues(css) {
+  const withoutComments = stripCssComments(css);
+  const urls = [];
+  const lowerCss = withoutComments.toLowerCase();
+  let index = 0;
+
+  while (index < withoutComments.length) {
+    const start = lowerCss.indexOf("url(", index);
+
+    if (start === -1) {
+      break;
+    }
+
+    if (start > 0 && /[a-z0-9_-]/i.test(withoutComments[start - 1])) {
+      index = start + "url(".length;
+      continue;
+    }
+
+    let cursor = start + "url(".length;
+    while (cursor < withoutComments.length && /\s/.test(withoutComments[cursor])) {
+      cursor += 1;
+    }
+
+    const quote = withoutComments[cursor];
+
+    if (quote === '"' || quote === "'") {
+      const valueStart = cursor + 1;
+      cursor = valueStart;
+
+      while (cursor < withoutComments.length) {
+        if (withoutComments[cursor] === "\\") {
+          cursor += 2;
+          continue;
+        }
+
+        if (withoutComments[cursor] === quote) {
+          break;
+        }
+
+        cursor += 1;
+      }
+
+      urls.push(withoutComments.slice(valueStart, cursor).trim());
+      const closingParen = withoutComments.indexOf(")", cursor + 1);
+      index = closingParen === -1 ? withoutComments.length : closingParen + 1;
+      continue;
+    }
+
+    const valueStart = cursor;
+
+    while (cursor < withoutComments.length) {
+      if (withoutComments[cursor] === "\\") {
+        cursor += 2;
+        continue;
+      }
+
+      if (withoutComments[cursor] === ")") {
+        break;
+      }
+
+      cursor += 1;
+    }
+
+    urls.push(withoutComments.slice(valueStart, cursor).trim());
+    index = cursor < withoutComments.length ? cursor + 1 : withoutComments.length;
+  }
+
+  return urls;
+}
+
+function stripCssComments(css) {
+  return css.replace(/\/\*[\s\S]*?\*\//g, "");
+}
+
+function isSafeCommunityCssUrl(value) {
+  return /^data:/i.test(value.trim());
+}
 
 function copyIfExists(path) {
   const source = join(pluginDir, path);
