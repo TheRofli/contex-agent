@@ -54,6 +54,17 @@ assert.equal(isVaultLocalDescriptionRequest("Find current LLM notes in my vault.
 
 assert.equal(isVaultLocalDescriptionRequest("Search current LLM notes in my vault"), true);
 
+assert.equal(isVaultLocalDescriptionRequest("Search files about current LLM notes"), true);
+
+assert.equal(isVaultLocalDescriptionRequest("Search files about current LLM"), true);
+
+assert.equal(
+  isVaultLocalDescriptionRequest("Describe this file about latest LLM tools"),
+  true
+);
+
+assert.equal(isVaultLocalDescriptionRequest("Describe file about latest LLM tools"), true);
+
 assert.equal(isVaultLocalDescriptionRequest("Найди заметки про актуальные LLM"), true);
 
 assert.equal(isVaultLocalDescriptionRequest("Найди файлы про актуальные LLM"), true);

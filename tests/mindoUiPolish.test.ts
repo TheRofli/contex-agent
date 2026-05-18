@@ -78,6 +78,14 @@ assert.ok(
   isSidebarExplicitWebIntentPhraseBased(sidebarView),
   "Expected AgentSidebarView.decideAutoWebResearch explicit web intent to avoid bare topical 'web'."
 );
+assert.ok(
+  isResearchWorkflowGuardedBeforeKeywordFallback(sidebarView),
+  "Expected AgentSidebarView.buildResearchWorkflowWebContext to skip vault-local prompts before research keyword fallback."
+);
+assert.ok(
+  isResearchWorkflowWebKeywordConservative(sidebarView),
+  "Expected shouldUseWebForResearchWorkflow to avoid bare topical 'web'."
+);
 
 console.log("mindoUiPolish tests passed");
 
@@ -213,6 +221,41 @@ function isSidebarExplicitWebIntentPhraseBased(source: string): boolean {
 
   return (
     method.includes("const explicitWeb = hasExplicitWebIntent(userRequest);") &&
+    !method.includes('"web"')
+  );
+}
+
+function isResearchWorkflowGuardedBeforeKeywordFallback(source: string): boolean {
+  const method = source.match(
+    /private async buildResearchWorkflowWebContext[\s\S]*?private async prepareResearchNoteProposal/u
+  )?.[0];
+
+  if (!method) {
+    return false;
+  }
+
+  const autoWebIndex = method.indexOf("this.buildAutoWebContextForRequest");
+  const vaultLocalIndex = method.indexOf("isVaultLocalDescriptionRequest(commandText)");
+  const fallbackIndex = method.indexOf("shouldUseWebForResearchWorkflow(commandText)");
+
+  return (
+    autoWebIndex >= 0 &&
+    vaultLocalIndex > autoWebIndex &&
+    fallbackIndex > vaultLocalIndex
+  );
+}
+
+function isResearchWorkflowWebKeywordConservative(source: string): boolean {
+  const method = source.match(
+    /function shouldUseWebForResearchWorkflow[\s\S]*?function sanitizeResearchTitle/u
+  )?.[0];
+
+  if (!method) {
+    return false;
+  }
+
+  return (
+    method.includes("hasExplicitWebIntent(commandText)") &&
     !method.includes('"web"')
   );
 }

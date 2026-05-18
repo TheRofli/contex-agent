@@ -33,7 +33,7 @@ export function isVaultLocalDescriptionRequest(userRequest: string): boolean {
     "my vault",
     "in my vault",
     "from my vault"
-  ]) || includesAnyWord(normalized, ["note", "notes", "path"]);
+  ]) || includesAnyWord(normalized, ["file", "files", "note", "notes", "path"]);
   const descriptionIntent = includesAny(normalized, [
     "опиши",
     "описать",

@@ -3317,6 +3317,10 @@ export class ContexAgentView extends ItemView {
       return autoWebContext;
     }
 
+    if (isVaultLocalDescriptionRequest(commandText)) {
+      return null;
+    }
+
     if (
       !this.plugin.settings.webSearchEnabled ||
       !shouldUseWebForResearchWorkflow(commandText)
@@ -9707,7 +9711,7 @@ function isProjectMemoryFile(path: string): boolean {
 function shouldUseWebForResearchWorkflow(commandText: string): boolean {
   const normalized = normalizeVoiceCommandText(commandText);
 
-  return includesAny(normalized, [
+  return hasExplicitWebIntent(commandText) || includesAny(normalized, [
     "\u0430\u043a\u0442\u0443\u0430\u043b",
     "\u0441\u0432\u0435\u0436",
     "\u043f\u043e\u0441\u043b\u0435\u0434\u043d",
@@ -9718,7 +9722,6 @@ function shouldUseWebForResearchWorkflow(commandText: string): boolean {
     "\u0438\u043d\u0441\u0442\u0440\u0443\u043c\u0435\u043d\u0442",
     "\u043c\u043e\u0434\u0435\u043b",
     "\u0438\u0438",
-    "web",
     "internet",
     "latest",
     "current",
