@@ -1,4 +1,7 @@
-import { rankOpenFilePathCandidates } from "../../resolver/openFileResolver";
+import {
+  resolveOpenFileTarget,
+  type OpenFileResolution
+} from "../../resolver/openFileResolution";
 import { getFolderPath } from "../createNotePathUtils";
 import type { VoiceSessionMemory } from "../sidebarTypes";
 
@@ -23,18 +26,22 @@ export class VaultFileOpenController<
 > {
   constructor(private readonly deps: VaultFileOpenControllerDeps<TFile>) {}
 
-  resolveOpenFileCandidate(query: string): TFile | null {
-    const ranked = rankOpenFilePathCandidates(
-      this.deps.getMarkdownPaths(),
-      query
-    );
-    const topPath = ranked[0]?.path;
+  resolveOpenFileDecision(query: string): OpenFileResolution {
+    return resolveOpenFileTarget({
+      paths: this.deps.getMarkdownPaths(),
+      query,
+      currentPath: this.deps.getVoiceSessionMemory().lastOpenedFile
+    });
+  }
 
-    if (!topPath) {
+  resolveOpenFileCandidate(query: string): TFile | null {
+    const decision = this.resolveOpenFileDecision(query);
+
+    if (decision.kind !== "direct") {
       return null;
     }
 
-    return this.deps.getFileByPath(topPath);
+    return this.deps.getFileByPath(decision.candidate.path);
   }
 
   async openVaultPath(

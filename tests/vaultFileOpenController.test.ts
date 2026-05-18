@@ -10,7 +10,9 @@ interface FakeFile {
 const files: FakeFile[] = [
   { path: "Test/Test.md", basename: "Test" },
   { path: "lumiq/stat1.md", basename: "stat1" },
-  { path: "lumiq/lumiq.md", basename: "lumiq" }
+  { path: "lumiq/lumiq.md", basename: "lumiq" },
+  { path: "Proton/Qore Systems Cases.md", basename: "Qore Systems Cases" },
+  { path: "Proton/Qore Systems Strategy.md", basename: "Qore Systems Strategy" }
 ];
 
 const memory: VoiceSessionMemory = {
@@ -51,6 +53,16 @@ assert.equal(
   controller.resolveOpenFileCandidate("открой lumiq в папке lumiq")?.path,
   "lumiq/lumiq.md"
 );
+
+const qoreDecision = controller.resolveOpenFileDecision("qore systems");
+assert.equal(qoreDecision.kind, "clarify");
+assert.deepEqual(
+  qoreDecision.kind === "clarify"
+    ? qoreDecision.candidates.map((candidate) => candidate.path)
+    : [],
+  ["Proton/Qore Systems Cases.md", "Proton/Qore Systems Strategy.md"]
+);
+assert.equal(controller.resolveOpenFileCandidate("qore systems"), null);
 
 await controller.openVaultPath("Test/Test.md", "Opened test");
 

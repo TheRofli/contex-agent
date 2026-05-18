@@ -1,4 +1,8 @@
 import type { ActionTimelineEventType } from "../../actions/actionTimeline";
+import {
+  resolveOpenFileTarget,
+  type OpenFileResolution
+} from "../../resolver/openFileResolution";
 import type { ActionReceipt, VaultSearchResult } from "../../types";
 import { getFolderPath } from "../createNotePathUtils";
 
@@ -51,18 +55,56 @@ export class OpenFileCommandController {
     commandText: string
   ): Promise<string | null> {
     this.deps.pushActionTimeline("opening", "Opening note", query);
-    const results = await this.resolveQuery(query);
+    const resolution = await this.resolveQuery(query);
 
-    if (!results.length) {
+    if (resolution.kind === "none") {
       this.deps.setError(`Could not find a Markdown note for: ${query}`);
       this.deps.setStatus("Status: Open failed");
       this.deps.pushActionTimeline("failed", "Open failed", query);
       return null;
     }
 
-    const result = results[0];
+    if (resolution.kind === "clarify") {
+      const detail = resolution.candidates
+        .map((candidate, index) => `${index + 1}. ${candidate.path}`)
+        .join(" | ");
+      const results = resolution.candidates.map((candidate) => ({
+        path: candidate.path,
+        title: candidate.basename,
+        score: candidate.score,
+        snippet: "Close Markdown note match.",
+        matches: ["filename", "path"]
+      }));
 
-    this.deps.rememberVaultSearch(query, results);
+      this.deps.rememberVaultSearch(query, results);
+      this.deps.appendActionReceipt(
+        {
+          status: "needs_confirmation",
+          label: "Choose note",
+          detail
+        },
+        commandText
+      );
+      this.deps.setStatus("Status: Choose note");
+      this.deps.pushActionTimeline(
+        "failed",
+        "Open needs confirmation",
+        detail
+      );
+      return null;
+    }
+
+    const result = {
+      path: resolution.candidate.path,
+      title: resolution.candidate.basename,
+      score: resolution.candidate.score,
+      snippet: resolution.reason,
+      matches: resolution.reason === "Matched by Rust path resolver."
+        ? ["rust-core", "path"]
+        : ["filename", "path"]
+    };
+
+    this.deps.rememberVaultSearch(query, [result]);
     await this.deps.openVaultPath(result.path, `Opened file: ${result.path}`);
     this.deps.appendActionReceipt(
       {
@@ -77,22 +119,32 @@ export class OpenFileCommandController {
     return result.path;
   }
 
-  private async resolveQuery(query: string): Promise<VaultSearchResult[]> {
+  private async resolveQuery(query: string): Promise<OpenFileResolution> {
     const directFile = this.deps.resolveDirectCandidate(query);
 
     if (directFile) {
-      return [
-        {
+      return {
+        kind: "direct",
+        candidate: {
           path: directFile.path,
-          title: directFile.basename,
+          basename: directFile.basename,
+          folder: getFolderPath(directFile.path),
           score: 999,
-          snippet: "Matched by file name and folder.",
-          matches: ["filename", "path"]
-        }
-      ];
+        },
+        reason: "Matched by file name and folder."
+      };
     }
 
     const paths = this.deps.getMarkdownPaths();
+    const localResolution = resolveOpenFileTarget({
+      paths,
+      query
+    });
+
+    if (localResolution.kind !== "none") {
+      return localResolution;
+    }
+
     const rustResolved = await this.deps.resolvePathsWithRustCore({
       query,
       paths,
@@ -101,15 +153,22 @@ export class OpenFileCommandController {
     });
 
     if (rustResolved?.length) {
-      return rustResolved.map((result) => ({
-        path: result.path,
-        title: result.path.split("/").pop()?.replace(/\.md$/i, "") ?? result.path,
-        score: result.score,
-        snippet: "Matched by Rust path resolver.",
-        matches: ["rust-core", "path"]
-      }));
+      const result = rustResolved[0];
+
+      return {
+        kind: "direct",
+        candidate: {
+          path: result.path,
+          basename:
+            result.path.split("/").pop()?.replace(/\.md$/i, "") ??
+            result.path,
+          folder: getFolderPath(result.path),
+          score: result.score
+        },
+        reason: "Matched by Rust path resolver."
+      };
     }
 
-    return [];
+    return localResolution;
   }
 }

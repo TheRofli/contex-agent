@@ -101,8 +101,8 @@ async function testRustFallback(): Promise<void> {
   });
 
   const result = await controller.openFileByVaultQuery(
-    "lumiq in folder lumiq",
-    "Open LUMIK in folder LUMIK"
+    "runtime index",
+    "Open runtime index"
   );
 
   assert.equal(result, "lumiq/lumiq.md");
@@ -143,8 +143,36 @@ async function testNoSemanticContentFallbackAndFailure(): Promise<void> {
   assert.equal(failed.timeline.at(-1)?.type, "failed");
 }
 
+async function testAmbiguousCandidateAsksForConfirmation(): Promise<void> {
+  const remembered: Array<{ query: string; results: VaultSearchResult[] }> = [];
+  const { controller, opened, receipts, statuses, timeline } = createDeps({
+    getMarkdownPaths: () => [
+      "Proton/Qore Systems Cases.md",
+      "Proton/Qore Systems Strategy.md"
+    ],
+    rememberVaultSearch: (query, results) =>
+      remembered.push({ query, results })
+  });
+
+  const result = await controller.openFileByVaultQuery(
+    "qore systems",
+    "Open qore systems"
+  );
+
+  assert.equal(result, null);
+  assert.deepEqual(opened, []);
+  assert.equal(receipts[0].status, "needs_confirmation");
+  assert.equal(receipts[0].label, "Choose note");
+  assert.match(receipts[0].detail ?? "", /Proton\/Qore Systems Cases\.md/);
+  assert.match(receipts[0].detail ?? "", /Proton\/Qore Systems Strategy\.md/);
+  assert.equal(remembered[0].results[0].snippet, "Close Markdown note match.");
+  assert.equal(statuses.at(-1), "Status: Choose note");
+  assert.equal(timeline.at(-1)?.type, "failed");
+}
+
 await testDirectCandidateWins();
 await testRustFallback();
 await testNoSemanticContentFallbackAndFailure();
+await testAmbiguousCandidateAsksForConfirmation();
 
 console.log("openFileCommandController tests passed");

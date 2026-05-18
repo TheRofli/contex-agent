@@ -129,5 +129,9 @@ export function formatActionReceiptStatus(status: ActionReceipt["status"]): stri
     return "Rejected";
   }
 
+  if (status === "needs_confirmation") {
+    return "Needs confirmation";
+  }
+
   return "Failed";
 }

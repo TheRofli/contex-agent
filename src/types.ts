@@ -103,7 +103,15 @@ export interface ChatMessage {
 }
 
 export interface ActionReceipt {
-  status: "done" | "preview" | "opened" | "saved" | "reverted" | "rejected" | "failed";
+  status:
+    | "done"
+    | "preview"
+    | "opened"
+    | "saved"
+    | "reverted"
+    | "rejected"
+    | "failed"
+    | "needs_confirmation";
   label: string;
   detail?: string;
   path?: string;

@@ -43,6 +43,7 @@ const messages: ChatMessage[] = [
 
 assert.equal(findLatestUserMessage(messages)?.id, "user-1");
 assert.equal(formatActionReceiptStatus("saved"), "Saved");
+assert.equal(formatActionReceiptStatus("needs_confirmation"), "Needs confirmation");
 assert.equal(escapeMarkdownLinkText("A [source]"), "A \\[source\\]");
 assert.match(serializeChatMessagesForNote(messages), /Action: Opened - Opened note/);
 assert.match(serializeChatMessagesForNote(messages), /Path: Test\/Test.md/);
