@@ -36,6 +36,11 @@ assert.equal(
 );
 
 assert.equal(
+  isVaultLocalDescriptionRequest("Summarize this note and use Web Components examples"),
+  true
+);
+
+assert.equal(
   isVaultLocalDescriptionRequest("What is in the current note? Search the internet too."),
   false
 );

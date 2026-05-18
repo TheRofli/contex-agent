@@ -71,7 +71,7 @@ export function isVaultLocalDescriptionRequest(userRequest: string): boolean {
 export function hasExplicitWebIntent(userRequest: string): boolean {
   const normalized = normalizeRequestText(userRequest);
 
-  return includesAny(normalized, [
+  return includesAnyPhrase(normalized, [
     "в интернете",
     "в вебе",
     "поиск в сети",
@@ -94,7 +94,6 @@ export function hasExplicitWebIntent(userRequest: string): boolean {
     "search the web",
     "use the web",
     "using the web",
-    "use web",
     "web search",
     "web research",
     "web sources",
@@ -109,6 +108,13 @@ export function normalizeRequestText(value: string): string {
 
 function includesAny(text: string, needles: string[]): boolean {
   return needles.some((needle) => text.includes(needle));
+}
+
+function includesAnyPhrase(text: string, phrases: string[]): boolean {
+  return phrases.some((phrase) => {
+    const escaped = phrase.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    return new RegExp(`(^|[^\\p{L}\\p{N}])${escaped}(?=$|[^\\p{L}\\p{N}])`, "u").test(text);
+  });
 }
 
 function includesAnyLocalPhrase(text: string, phrases: string[]): boolean {
