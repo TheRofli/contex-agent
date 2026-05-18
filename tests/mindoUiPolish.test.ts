@@ -88,7 +88,7 @@ assert.ok(
 );
 assert.ok(
   isStarterPromptEmptyStateWired(sidebarView),
-  "Expected AgentSidebarView.renderSuggestions to render first-value starter prompt cards in the empty state."
+  "Expected AgentSidebarView.renderSuggestions to delegate first-value starter prompt cards to SuggestionCardsRenderer."
 );
 assert.ok(
   isUpdateCurrentNoteActionPromptForwarded(sidebarView),
@@ -278,21 +278,28 @@ function isStarterPromptEmptyStateWired(source: string): boolean {
   }
 
   const hiddenIndex = method.indexOf("contex-agent__suggestions--hidden");
-  const messageReturnIndex = method.indexOf("if (this.messages.length > 0)");
   const heroIndex = method.indexOf("renderHomeHero");
-  const cardsIndex = method.indexOf("getSuggestionCards(this.getUiLanguage())");
+  const rendererIndex = method.indexOf("new SuggestionCardsRenderer");
+  const renderIndex = method.indexOf("renderer.render");
 
   return (
     source.includes(
+      'import { SuggestionCardsRenderer } from "./suggestionCardsRenderer";'
+    ) &&
+    !source.includes(
       'import { getSuggestionCards } from "./suggestionCardsRenderer";'
     ) &&
     hiddenIndex >= 0 &&
-    messageReturnIndex > hiddenIndex &&
-    heroIndex > messageReturnIndex &&
-    cardsIndex > heroIndex &&
-    method.includes('cls: "contex-agent__suggestion-cards"') &&
-    method.includes('cls: "contex-agent__suggestion-card"') &&
-    method.includes("void this.runNoteAction(card.action)")
+    heroIndex > hiddenIndex &&
+    rendererIndex > heroIndex &&
+    renderIndex > rendererIndex &&
+    method.includes("getUiLanguage: () => this.getUiLanguage()") &&
+    method.includes("t: (key) => this.t(key)") &&
+    method.includes("runNoteAction: (action) => this.runNoteAction(action)") &&
+    method.includes("setIcon: (element, icon) => setIcon(element, icon)") &&
+    method.includes("this.noteActionButtons = renderer.render") &&
+    method.includes("messages: this.messages") &&
+    method.includes("noteActionButtons: this.noteActionButtons")
   );
 }
 

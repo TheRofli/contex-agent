@@ -17,7 +17,7 @@ import {
   installRuntimeComfortaaFont
 } from "./sidebarAssetResources";
 import { renderHomeHero } from "./homeHeroRenderer";
-import { getSuggestionCards } from "./suggestionCardsRenderer";
+import { SuggestionCardsRenderer } from "./suggestionCardsRenderer";
 import { getSelectedTextContext } from "../context/selectedTextContext";
 import {
   requestLlmChatCompletion,
@@ -1840,12 +1840,6 @@ export class ContexAgentView extends ItemView {
       return;
     }
 
-    this.noteActionButtons = this.noteActionButtons.filter(
-      (button) =>
-        button.isConnected &&
-        !button.classList.contains("contex-agent__suggestion-card")
-    );
-
     renderHomeHero({
       parentEl: this.suggestionsEl,
       greeting: this.t("homeGreeting"),
@@ -1853,40 +1847,21 @@ export class ContexAgentView extends ItemView {
         this.createMindoLogoImage(parentEl, className)
     });
 
-    this.suggestionsEl.createDiv({
-      cls: "contex-agent__suggestions-title",
-      text: this.t("suggestedPrompts")
-    });
     const cardsEl = this.suggestionsEl.createDiv({
-      cls: "contex-agent__suggestion-cards"
+      cls: "contex-agent__suggestion-card-host"
     });
 
-    getSuggestionCards(this.getUiLanguage()).forEach((card) => {
-      const cardEl = cardsEl.createEl("button", {
-        cls: "contex-agent__suggestion-card",
-        attr: {
-          type: "button"
-        }
-      });
-      const textEl = cardEl.createDiv({
-        cls: "contex-agent__suggestion-card-text"
-      });
-      textEl.createDiv({
-        cls: "contex-agent__suggestion-card-title",
-        text: card.label
-      });
-      textEl.createDiv({
-        cls: "contex-agent__suggestion-card-desc",
-        text: card.description
-      });
-      const iconEl = cardEl.createSpan({
-        cls: "contex-agent__suggestion-card-icon"
-      });
-      setIcon(iconEl, "plus-circle");
-      cardEl.addEventListener("click", () => {
-        void this.runNoteAction(card.action);
-      });
-      this.noteActionButtons.push(cardEl);
+    const renderer = new SuggestionCardsRenderer({
+      getUiLanguage: () => this.getUiLanguage(),
+      t: (key) => this.t(key),
+      runNoteAction: (action) => this.runNoteAction(action),
+      setIcon: (element, icon) => setIcon(element, icon)
+    });
+    this.noteActionButtons = renderer.render({
+      suggestionsEl: cardsEl,
+      messages: this.messages,
+      noteActionButtons: this.noteActionButtons,
+      refreshConversationChrome: () => this.refreshConversationChrome()
     });
   }
 
