@@ -98,6 +98,49 @@ function baseOptions(overrides: Record<string, unknown> = {}) {
 }
 
 {
+  let searched = false;
+
+  const context = await buildResearchWorkflowWebContext(
+    baseOptions({
+      commandText: "Summarize the current note about Web Components",
+      shouldUseWebForResearchWorkflow: () => true,
+      searchWeb: async () => {
+        searched = true;
+        return {
+          provider: "duckduckgo",
+          results: [webResult]
+        };
+      }
+    })
+  );
+
+  assert.equal(context, null);
+  assert.equal(searched, false);
+}
+
+{
+  let searched = false;
+
+  const context = await buildResearchWorkflowWebContext(
+    baseOptions({
+      commandText: "Describe the current note and use the web",
+      shouldUseWebForResearchWorkflow: () => true,
+      searchWeb: async (_settings: unknown, query: string) => {
+        searched = true;
+        return {
+          provider: "duckduckgo",
+          fallbackReason: query.includes("current") ? "direct" : undefined,
+          results: [webResult]
+        };
+      }
+    })
+  );
+
+  assert.equal(searched, true);
+  assert.equal(context?.provider, "duckduckgo");
+}
+
+{
   const statuses: string[] = [];
 
   const context = await buildResearchWorkflowWebContext(

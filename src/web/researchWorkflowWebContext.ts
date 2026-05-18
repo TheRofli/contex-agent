@@ -1,5 +1,9 @@
 import type { ContexSettings, LlmRequestContext, WebSearchResult } from "../types";
 import type { AutoWebContext } from "../views/sidebarTypes";
+import {
+  hasExplicitWebIntent,
+  isVaultLocalDescriptionRequest
+} from "../chat/autoWebGuards";
 
 export const RESEARCH_WORKFLOW_WEB_REASON =
   "Research workflow used web context because the task appears to depend on current technologies, tools, or recommendations.";
@@ -46,6 +50,13 @@ export async function buildResearchWorkflowWebContext<
 
   if (autoWebContext) {
     return autoWebContext;
+  }
+
+  if (
+    isVaultLocalDescriptionRequest(options.commandText) &&
+    !hasExplicitWebIntent(options.commandText)
+  ) {
+    return null;
   }
 
   if (

@@ -54,6 +54,21 @@ assert.equal(
 );
 
 assert.equal(
+  isVaultLocalDescriptionRequest("Describe the current note and use the web"),
+  false
+);
+
+assert.equal(
+  isVaultLocalDescriptionRequest("Summarize this note using the web"),
+  false
+);
+
+assert.equal(
+  isVaultLocalDescriptionRequest("Describe this file and use web sources"),
+  false
+);
+
+assert.equal(
   isVaultLocalDescriptionRequest("Describe the open note about Web Components"),
   true
 );
