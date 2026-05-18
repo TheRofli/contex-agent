@@ -132,6 +132,14 @@ assert.equal(isVaultLocalDescriptionRequest("Describe file about latest LLM tool
 
 assert.equal(isVaultLocalDescriptionRequest("Найди заметки про актуальные LLM"), true);
 
+assert.equal(isVaultLocalDescriptionRequest("поищи заметки про актуальные LLM"), true);
+
+assert.equal(isVaultLocalDescriptionRequest("поиск по vault про актуальные LLM"), true);
+
+assert.equal(isVaultLocalDescriptionRequest("поищи в интернете актуальные LLM"), false);
+
+assert.equal(isVaultLocalDescriptionRequest("поиск в интернете актуальные LLM"), false);
+
 assert.equal(isVaultLocalDescriptionRequest("Найди файлы про актуальные LLM"), true);
 
 assert.equal(isVaultLocalDescriptionRequest("Покажи путь к заметке про LLM"), true);

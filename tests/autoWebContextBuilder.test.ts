@@ -235,6 +235,64 @@ function baseOptions(overrides: Record<string, unknown> = {}) {
 }
 
 {
+  let searched = false;
+
+  const context = await buildAutoWebContext(
+    baseOptions({
+      userRequest: "поищи заметки про актуальные LLM",
+      isLocalOnlyCommandText: () => false,
+      decideAutoWebResearch: () => ({
+        query: "актуальные LLM",
+        reason: "freshness requested"
+      }),
+      planContextWorkflow: () => ({
+        requiresWeb: true,
+        reason: "time-sensitive request"
+      }),
+      searchWeb: async () => {
+        searched = true;
+        return {
+          provider: "duckduckgo",
+          results: [webResult]
+        };
+      }
+    })
+  );
+
+  assert.equal(context, null);
+  assert.equal(searched, false);
+}
+
+{
+  let searched = false;
+
+  const context = await buildAutoWebContext(
+    baseOptions({
+      userRequest: "поиск по vault про актуальные LLM",
+      isLocalOnlyCommandText: () => false,
+      decideAutoWebResearch: () => ({
+        query: "актуальные LLM",
+        reason: "freshness requested"
+      }),
+      planContextWorkflow: () => ({
+        requiresWeb: true,
+        reason: "time-sensitive request"
+      }),
+      searchWeb: async () => {
+        searched = true;
+        return {
+          provider: "duckduckgo",
+          results: [webResult]
+        };
+      }
+    })
+  );
+
+  assert.equal(context, null);
+  assert.equal(searched, false);
+}
+
+{
   const statuses: string[] = [];
   const timeline: string[] = [];
 
