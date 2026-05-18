@@ -38,7 +38,10 @@ export function isVaultLocalDescriptionRequest(userRequest: string): boolean {
   const genericLocalTarget =
     hasLocalAnchor(normalized) &&
     includesAnyWord(normalized, ["file", "files", "note", "notes", "path", "vault"]);
-  const localTarget = explicitLocalTarget || genericLocalTarget;
+  const pluralSearchTarget =
+    includesAnyWord(normalized, ["files", "notes"]) &&
+    hasSearchStyleIntent(normalized);
+  const localTarget = explicitLocalTarget || genericLocalTarget || pluralSearchTarget;
   const descriptionIntent = includesAny(normalized, [
     "опиши",
     "описать",
@@ -143,5 +146,21 @@ function hasLocalAnchor(text: string): boolean {
     "текущ",
     "открыт",
     "активн"
+  ]);
+}
+
+function hasSearchStyleIntent(text: string): boolean {
+  return includesAny(text, [
+    "find",
+    "search",
+    "show",
+    "read",
+    "list",
+    "найди",
+    "найти",
+    "поищи",
+    "поиск",
+    "искать",
+    "покажи"
   ]);
 }
