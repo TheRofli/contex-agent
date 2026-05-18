@@ -24,7 +24,10 @@ import type {
   LlmRequestContext,
   VaultSearchResult
 } from "../types";
-import { hasExplicitWebIntent } from "../chat/autoWebGuards";
+import {
+  hasExplicitWebIntent,
+  isVaultLocalDescriptionRequest
+} from "../chat/autoWebGuards";
 
 const PROJECT_MEMORY_FOLDER = "Mindo Memory";
 
@@ -275,6 +278,10 @@ export function decideAutoWebResearch(
     normalized.includes("without web") ||
     normalized.includes("no web")
   ) {
+    return null;
+  }
+
+  if (isVaultLocalDescriptionRequest(userRequest)) {
     return null;
   }
 

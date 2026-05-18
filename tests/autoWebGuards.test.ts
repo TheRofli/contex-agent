@@ -19,6 +19,12 @@ assert.equal(isVaultLocalDescriptionRequest("latest local LLM releases"), false)
 
 assert.equal(isVaultLocalDescriptionRequest("What is this active note about?"), true);
 
+assert.equal(isVaultLocalDescriptionRequest("What is in the current note?"), true);
+
+assert.equal(isVaultLocalDescriptionRequest("What's in the current note?"), true);
+
+assert.equal(isVaultLocalDescriptionRequest("Tell me about the current note"), true);
+
 assert.equal(
   isVaultLocalDescriptionRequest("Explain the opened file and use my vault notes."),
   true
@@ -81,6 +87,8 @@ assert.equal(isVaultLocalDescriptionRequest("Search current LLM notes in my vaul
 
 assert.equal(isVaultLocalDescriptionRequest("Can you search vault for current LLM?"), true);
 
+assert.equal(isVaultLocalDescriptionRequest("Find current note-taking apps"), false);
+
 assert.equal(isVaultLocalDescriptionRequest("Search files about current LLM notes"), true);
 
 assert.equal(isVaultLocalDescriptionRequest("Search files about current LLM"), true);
@@ -90,7 +98,7 @@ assert.equal(
   true
 );
 
-assert.equal(isVaultLocalDescriptionRequest("Describe file about latest LLM tools"), true);
+assert.equal(isVaultLocalDescriptionRequest("Describe file about latest LLM tools"), false);
 
 assert.equal(isVaultLocalDescriptionRequest("Найди заметки про актуальные LLM"), true);
 

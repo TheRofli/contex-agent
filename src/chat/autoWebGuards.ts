@@ -5,7 +5,7 @@ export function isVaultLocalDescriptionRequest(userRequest: string): boolean {
     return false;
   }
 
-  const localTarget = includesAny(normalized, [
+  const explicitLocalTarget = includesAny(normalized, [
     "открыт",
     "текущ",
     "этот файл",
@@ -21,6 +21,10 @@ export function isVaultLocalDescriptionRequest(userRequest: string): boolean {
     "из vault",
     "в хранилище",
     "из хранилища",
+    "my vault",
+    "in my vault",
+    "from my vault"
+  ]) || includesAnyLocalPhrase(normalized, [
     "current note",
     "this note",
     "open note",
@@ -29,12 +33,12 @@ export function isVaultLocalDescriptionRequest(userRequest: string): boolean {
     "file path",
     "open file",
     "opened file",
-    "active note",
-    "my vault",
-    "in my vault",
-    "from my vault"
-  ]) ||
+    "active note"
+  ]);
+  const genericLocalTarget =
+    hasLocalAnchor(normalized) &&
     includesAnyWord(normalized, ["file", "files", "note", "notes", "path", "vault"]);
+  const localTarget = explicitLocalTarget || genericLocalTarget;
   const descriptionIntent = includesAny(normalized, [
     "опиши",
     "описать",
@@ -51,7 +55,11 @@ export function isVaultLocalDescriptionRequest(userRequest: string): boolean {
     "describe",
     "explain",
     "what is this",
+    "what is in",
+    "what's in",
+    "tell me about",
     "find",
+    "read",
     "search",
     "show",
     "open"
@@ -92,6 +100,28 @@ function includesAny(text: string, needles: string[]): boolean {
   return needles.some((needle) => text.includes(needle));
 }
 
+function includesAnyLocalPhrase(text: string, phrases: string[]): boolean {
+  return phrases.some((phrase) => {
+    const escaped = phrase.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    return new RegExp(`\\b${escaped}\\b(?!-)`, "u").test(text);
+  });
+}
+
 function includesAnyWord(text: string, words: string[]): boolean {
-  return words.some((word) => new RegExp(`\\b${word}\\b`, "u").test(text));
+  return words.some((word) => new RegExp(`\\b${word}\\b(?!-)`, "u").test(text));
+}
+
+function hasLocalAnchor(text: string): boolean {
+  return includesAny(text, [
+    "current",
+    "this",
+    "open",
+    "opened",
+    "active",
+    "vault",
+    "хранилищ",
+    "текущ",
+    "открыт",
+    "активн"
+  ]);
 }

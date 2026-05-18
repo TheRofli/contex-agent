@@ -39,6 +39,10 @@ assert.equal(
 );
 
 assert.equal(decideAutoWebResearch("Explain Web Components"), null);
+assert.equal(decideAutoWebResearch("What is in the current note?"), null);
+assert.equal(decideAutoWebResearch("What's in the current note?"), null);
+assert.equal(decideAutoWebResearch("Tell me about the current note"), null);
+assert.notEqual(decideAutoWebResearch("Find current note-taking apps"), null);
 assert.equal(
   decideAutoWebResearch("search the web for Web Components")?.query,
   "search the web for Web Components"
